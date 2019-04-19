@@ -1,6 +1,6 @@
 # from pyparsing import parseString
+import argparse
 import re
-
 
 from _Final.parser.preprocessing import uni2buck
 from _Final.parser.preprocessing.preprocessor import space_mixed_words, \
@@ -24,56 +24,55 @@ preloaded_words = ['باش', 'انت', 'اللي', 'التي', 'الذي', 'ال
         'هذايا', 'غادي', 'بعد', 'لكن', 'انشالله', 'الى', 'من', 'في', 'على', 'بش',
         ]
 
-
-def preload_common_words():
-    for word in preloaded_words:
-        p = Parse(raw=word)
-        p.raw_bw  = uni2buck.transString(word, reverse=True)
-        p.parse_string, p.pos = word, 'UNIN'
-        p.stem = word
-        p.save()
-        part = p.raw
-        pp = ParsePart(part=part, parse=p)
-        pp.part_bw = p.raw_bw
-        pp.save()
-
+saved_parses = {}
 
 def parser(string):
 
-    try:
-        Parse.objects.get(raw=preloaded_words[0])
-    except ObjectDoesNotExist:
-        preload_common_words()
+    if string in saved_parses.values():
+        return saved_parses[string]
 
-    parsed_list = []
-    string = preprocess(string.strip())
-    for word in string.split(' '):
-        if word:
-            try:
-                p = Parse.objects.get(raw=word)
-                parsed_list.append(p.stem)
-            except ObjectDoesNotExist:
-                p = Parse(raw=word)
-                p.raw_bw = uni2buck.transString(word, reverse=True)
-                if test_lang(word) == 'AR':
-                    parse_dict = stemmer(word)
-                    p.parse, p.pos = choose_best_parse(parse_dict)
-                    try:
-                        p.stem = p.parse.stem.asList()[0]
-                    except:
-                        p.stem = p.parse.stem
-                    parsed_list.append(p.stem)
-                    p.save()
-                    for part in p.parse.asList():
-                        pp = ParsePart(part=part, parse=p)
-                        pp.part_bw = uni2buck.transString(part, reverse=True)
-                        pp.save()
-                else:
-                    p.parse = word
-                    p.pos = 'FW'
-                    p.stem = word
-                    parsed_list.append(p.stem)
-                    p.save()
-                    pp = ParsePart(part=word, parse=p)
-                    pp.save()
-    return parsed_list
+    # try:
+    #     Parse.objects.get(raw=preloaded_words[0])
+    # except ObjectDoesNotExist:
+    #     preload_common_words()
+    #
+    # parsed_list = []
+    # string = preprocess(string.strip())
+    # for word in string.split(' '):
+    #     if word:
+    #         try:
+    #             p = Parse.objects.get(raw=word)
+    #             parsed_list.append(p.stem)
+    #         except ObjectDoesNotExist:
+    #             p = Parse(raw=word)
+    #             p.raw_bw = uni2buck.transString(word, reverse=True)
+    #             if test_lang(word) == 'AR':
+    #                 parse_dict = stemmer(word)
+    #                 p.parse, p.pos = choose_best_parse(parse_dict)
+    #                 try:
+    #                     p.stem = p.parse.stem.asList()[0]
+    #                 except:
+    #                     p.stem = p.parse.stem
+    #                 parsed_list.append(p.stem)
+    #                 p.save()
+    #                 for part in p.parse.asList():
+    #                     pp = ParsePart(part=part, parse=p)
+    #                     pp.part_bw = uni2buck.transString(part, reverse=True)
+    #                     pp.save()
+    #             else:
+    #                 p.parse = word
+    #                 p.pos = 'FW'
+    #                 p.stem = word
+    #                 parsed_list.append(p.stem)
+    #                 p.save()
+    #                 pp = ParsePart(part=word, parse=p)
+    #                 pp.save()
+    # return parsed_list
+
+if __name__ == '__main__':
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--string", type=str, default="../sts_strings/stsbenchmark/sts-dev.csv",
+                           help="string to parse")
+    args = argparser.parse_args()
+
+    parser(args.string)

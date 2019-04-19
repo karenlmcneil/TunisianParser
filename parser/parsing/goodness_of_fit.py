@@ -1,14 +1,14 @@
 import nltk
 
-from aeb_parser.parsing.pyparsing_grammar import vbz_suffixes, \
+from _Final.parser.parsing.pyparsing_grammar import vbz_suffixes, \
         poss_suffixes, def_art, def_art_short
-from aeb_parser.parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
+from _Final.parser.parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
     key_vbd_suffixes as vbd_suffixes, dir_obj_suffixes, pronouns
 
-from aeb_parser.parsing.stemmer import extract_stem, extract_suffix, extract_prefix
+from _Final.parser.parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
 
-corpus_text = open('data/corpus_clean.txt', 'r').read()
+corpus_text = open('../data/corpus_clean.txt', 'r').read()
 fd = nltk.FreqDist(corpus_text.split())
 
 
