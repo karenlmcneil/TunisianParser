@@ -1,7 +1,7 @@
-from django.test import TestCase
+from unittest import TestCase
 
-from aeb_parser.preprocessing import uni2buck
-from aeb_parser.parsing.stemmer import stemmer, extract_stem, extract_suffix
+from _Final.parser.preprocessing import uni2buck
+from _Final.parser.parsing.stemmer import stemmer, extract_stem, extract_suffix
 
 
 class StemmerTest(TestCase):

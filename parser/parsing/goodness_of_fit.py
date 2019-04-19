@@ -1,12 +1,12 @@
 import nltk
 import os
 
-from _Final.parser.parsing.pyparsing_grammar import vbz_suffixes, \
+from parser.parsing.pyparsing_grammar import vbz_suffixes, \
         poss_suffixes, def_art, def_art_short
-from _Final.parser.parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
+from parser.parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
     key_vbd_suffixes as vbd_suffixes, dir_obj_suffixes, pronouns
 
-from _Final.parser.parsing.stemmer import extract_stem, extract_suffix, extract_prefix
+from parser.parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
 corpus_text_location = os.getcwd() + '/parser/data/corpus_clean.txt'
 corpus_text = open(corpus_text_location, 'r').read()

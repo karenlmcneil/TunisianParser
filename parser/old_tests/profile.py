@@ -121,7 +121,7 @@ def make_unin_forms():
 #   203                                                   chosen_word_type = 'UNIN'
 #   204         4            6      1.5      0.0      return parse_dict[chosen_word_type], chosen_word_type
 # Total time: 0.86362 s
-# File: /home/larapsodia/development/aeb_parser/tests/profile.py
+# File: /home/larapsodia/development/aeb_parser/old_tests/profile.py
 # Function: choose_parse at line 44
 # Line #      Hits         Time  Per Hit   % Time  Line Contents
 # ==============================================================

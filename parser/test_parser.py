@@ -1,12 +1,13 @@
-from unittest import TestCase, skip
+from unittest import TestCase
+from .parser import Parser
 
-from _Final.parser.parser import parser
 
-class ParseTest(TestCase):
+class TestParser(TestCase):
 
     def test_existing_parse(self):
         string = 'باش'
-        parse = parser(string)
+        p = Parser(string)
+        parse = p.parse()
         expected_output = [[('باش', 'PART')]]
         self.assertEqual(expected_output, parse)
 

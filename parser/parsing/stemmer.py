@@ -1,6 +1,6 @@
 from pyparsing import ParseException
 
-from _Final.parser.parsing.pyparsing_grammar import word_types
+from parser.parsing.pyparsing_grammar import word_types
 
 
 def extract_stem(pyparsing_object):
