@@ -7,7 +7,7 @@ class ParseTest(TestCase):
     def test_existing_parse(self):
         string = 'باش'
         parse = parser(string)
-        expected_output = [('باش', 'PART')]
+        expected_output = [[('باش', 'PART')]]
         self.assertEqual(expected_output, parse)
 
     # def test_multiword_string(self):

@@ -21,18 +21,13 @@ def test_lang(string):
     return lang
 
 
-def punct_spacer(string):
-    """Takes a string and inserts a space between text and punctuation.
-    Returns a string."""
-
-    word_list = [i.strip() for i in re.split('(\W+)', string) \
-                if len(i.strip())>0]
-    return ' '.join(word_list)
-
-
 def space_mixed_words(string):
     """Takes a string and inserts space between Arabic and foreign letters.
-    Returns a string."""
+    Returns a string.
+    string = 'الmixed'
+    space_mixed_words(string)
+    'ال mixed'
+    """
 
     w = list(string)
     for l in w[1:]:
