@@ -56,6 +56,7 @@ class Parser:
                 self.parsed_list.append(saved_parses[word])
                 continue
             parse_dict = stemmer(word)
+            print(parse_dict)
             parse, pos = choose_best_parse(parse_dict)
             try:
                 stem = parse.stem.asList()[0]  # because stem is sometimes a list

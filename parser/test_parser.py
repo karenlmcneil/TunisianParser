@@ -11,6 +11,13 @@ class TestParser(TestCase):
         expected_output = [[('باش', 'PART')]]
         self.assertEqual(expected_output, parse)
 
+    def test_single_word(self):
+        string = 'الكتاب'
+        p = Parser(string)
+        parse = p.parse()
+        expected_output = [[('ال', 'DT'), ('كتاب', 'NN')]]
+        self.assertEqual(expected_output, parse)
+
     # def test_multiword_string(self):
     #     string = 'هذه العربية وهذه الmixed!'
     #     lemma_list = parser(string)
