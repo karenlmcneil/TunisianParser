@@ -8,21 +8,32 @@ class TestParser(TestCase):
         string = 'باش'
         p = Parser(string)
         parse = p.parse()
-        expected_output = [[('باش', 'PART')]]
+        expected_output = [('باش', 'PART')]
         self.assertEqual(expected_output, parse)
 
     def test_single_word(self):
         string = 'الكتاب'
         p = Parser(string)
         parse = p.parse()
-        expected_output = [[('ال', 'DT'), ('كتاب', 'NN')]]
+        expected_output = [('ال', 'DET'), ('كتاب', 'N')]
         self.assertEqual(expected_output, parse)
 
-    # def test_multiword_string(self):
-    #     string = 'هذه العربية وهذه الmixed!'
-    #     lemma_list = parser(string)
-    #     self.assertEqual(lemma_list, ['هذه', 'عربي', 'هذه', 'mixed', '!'])
-    #
+    def test_multiword_string(self):
+        string = 'هذه العربية وهذه الmixed!'
+        p = Parser(string)
+        parse = p.parse()
+        expected_output = [('هذه', 'PART'), ('ال', 'DET'), ('عربية', 'N'), ('و', 'C'),
+            ('هذه', 'UNIN'), ('ال', 'DET'), ('mixed', 'N'), ('!', 'PUNCT')]
+        self.assertEqual(expected_output, parse)
+
+    def test_multiple_prefix(self):
+        string = 'والكتاب'
+        p = Parser(string)
+        parse = p.parse()
+        print("parse is ", parse)
+        expected_output = [('و', 'C'), ('ال', 'DET'), ('كتاب', 'N')]
+        self.assertEqual(expected_output, parse)
+
     # def test_real_sentences(self):
     #     test_sent = 'ومن وقتاش رجعت تحكي معاه المدير؟'
     #     test_key = ['من', 'وقتاش', 'رجع', 'حكي', 'مع', 'مدير']

@@ -28,7 +28,7 @@ particles = ['باش', 'انت', 'اللي', 'التي', 'الذي', 'الذين
 saved_parses = {}  # TODO: Save to file
 
 for part in particles:
-    saved_parses[part] = [(part, 'PART')]
+    saved_parses[part] = (part, 'PART')
 
 
 class Parser:
@@ -58,11 +58,14 @@ class Parser:
             parse_dict = stemmer(word)
             print(parse_dict)
             parse, pos = choose_best_parse(parse_dict)
-            try:
-                stem = parse.stem.asList()[0]  # because stem is sometimes a list
-            except:
-                stem = parse.stem
-            self.parsed_list.append((stem, pos))
+            print(parse)
+            pos_list = pos.split('_')
+            # try:
+            #     stem = parse.stem.asList()[0]  # because stem is sometimes a list
+            # except:
+            #     stem = parse.stem
+            mapped = list(zip(parse, pos_list))
+            self.parsed_list.extend(mapped)
                     # for part in parse.asList():
                     #     pp = ParsePart(part=part, parse=p)
                     #     pp.part_bw = uni2buck.transString(part, reverse=True)
