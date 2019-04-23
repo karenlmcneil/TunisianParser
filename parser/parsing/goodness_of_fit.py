@@ -8,7 +8,8 @@ from parser.parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
 
 from parser.parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
-corpus_text_location = os.getcwd() + '/parser/data/corpus_clean.txt'
+corpus_text_location = 'parser/data/corpus_clean.txt'
+print("current directory is ", os.getcwd())
 corpus_text = open(corpus_text_location, 'r').read()
 fd = nltk.FreqDist(corpus_text.split())
 

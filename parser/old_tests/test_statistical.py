@@ -1,9 +1,7 @@
-from django.test import TestCase
+from unittest import TestCase, skip
 
-from unittest import skip
-
-from aeb_parser.parsing.stemmer import stemmer
-from aeb_parser.parsing.goodness_of_fit import corpus_text, \
+from parser.parsing.stemmer import stemmer
+from parser.parsing.goodness_of_fit import  \
     make_alt_unin_verb_forms, make_alt_verb_forms, compute_ave_freq, \
     choose_best_parse, make_alt_noun_forms
 
@@ -21,9 +19,8 @@ def choose_best_parse_test(word):
 class FreqDistTest(TestCase):
 
     def test_corpus_file_for_freq_dist_exists(self):
-        corpus = corpus_text
+        corpus = '../parser/data/corpus_clean.txt'
         self.assertEqual(str(type(corpus)), "<class 'str'>")
-
 
 
 class CreateAltFormsTest(TestCase):
@@ -115,8 +112,7 @@ class ChooseBestVBDParseTest(TestCase):
         'مشي')
 
     def test_vbd_indobj_parse(self):
-        self.assertEqual(choose_best_parse_test('قالتلي'),
-        'قال')
+        self.assertEqual(choose_best_parse_test('قالتلي'), 'قال')
 
     @skip("Root too short. Fixable?")
     def test_short_vbd_indobj_parse(self):
@@ -131,95 +127,75 @@ class ChooseBestVBDParseTest(TestCase):
     #     self.assertEqual(choose_best_parse_test('word'), 'parse')
 
     def test_doubly_weak_vbd_parse(self):
-        self.assertEqual(choose_best_parse_test('وليت'),
-        'ولي')
+        self.assertEqual(choose_best_parse_test('وليت'), 'ولي')
 
 
 class ChooseBestVBZParseTest(TestCase):
 
     def test_vbz_parse(self):
-        self.assertEqual(choose_best_parse_test('يكتبوا'),
-        'كتب')
+        self.assertEqual(choose_best_parse_test('يكتبوا'), 'كتب')
 
     def test_defective_vbz_parse1(self):
-        self.assertEqual(choose_best_parse_test('يمشي'),
-        'مشي')
+        self.assertEqual(choose_best_parse_test('يمشي'), 'مشي')
 
     def test_defective_vbz_parse2(self):
-        self.assertEqual(choose_best_parse_test('يمشيوا'),
-        'مشي')
+        self.assertEqual(choose_best_parse_test('يمشيوا'), 'مشي')
 
     def test_doubly_weak_vbz_parse1(self):
-        self.assertEqual(choose_best_parse_test('يوصي'),
-        'وصي')
+        self.assertEqual(choose_best_parse_test('يوصي'), 'وصي')
 
     @skip("Not fixable - must parse this type manually")
     def test_doubly_weak_vbz_parse2(self):
-        self.assertEqual(choose_best_parse_test('يولي'),
-        'ولي')
+        self.assertEqual(choose_best_parse_test('يولي'), 'ولي')
 
 
 class ChooseBestNegParseTest(TestCase):
 
     def test_neg_parse1(self):
-        self.assertEqual(choose_best_parse_test('مانحبش'),
-        'حب')
+        self.assertEqual(choose_best_parse_test('مانحبش'), 'حب')
 
     def test_neg_parse2(self):
-        self.assertEqual(choose_best_parse_test('منحبش'),
-        'حب')
+        self.assertEqual(choose_best_parse_test('منحبش'), 'حب')
 
     def test_neg_parse3(self):
-        self.assertEqual(choose_best_parse_test('مانعرفوش'),
-        'عرف')
+        self.assertEqual(choose_best_parse_test('مانعرفوش'), 'عرف')
 
     def test_neg_parse4(self):
-        self.assertEqual(choose_best_parse_test('ماتقولش'),
-        'قول')
+        self.assertEqual(choose_best_parse_test('ماتقولش'), 'قول')
 
     def test_neg_parse5(self):
-        self.assertEqual(choose_best_parse_test('ماقلتوليش'),
-        'قل')
+        self.assertEqual(choose_best_parse_test('ماقلتوليش'), 'قل')
 
     @skip
     def test_neg_parse6(self):
-        self.assertEqual(choose_best_parse_test('وماحبيتش'),
-        'حب')
+        self.assertEqual(choose_best_parse_test('وماحبيتش'), 'حب')
 
 
 class ChooseBestNounParseTest(TestCase):
 
     def test_best_detnoun_parse(self):
-        self.assertEqual(choose_best_parse_test('الكتاب'),
-        'كتاب')
+        self.assertEqual(choose_best_parse_test('الكتاب'), 'كتاب')
 
     def test_best_fem_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('الكرهبة'),
-        'كرهبة')
+        self.assertEqual(choose_best_parse_test('الكرهبة'), 'كرهبة')
 
     def test_nisba_parse(self):
-        self.assertEqual(choose_best_parse_test('العربي'),
-        'عربي')
+        self.assertEqual(choose_best_parse_test('العربي'), 'عربي')
 
     def test_defective_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('الجري'),
-        'جري')
+        self.assertEqual(choose_best_parse_test('الجري'), 'جري')
 
     def test_con_det_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('والدار'),
-        'دار')
+        self.assertEqual(choose_best_parse_test('والدار'), 'دار')
 
     def test_prep_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('للدار'),
-        'دار')
+        self.assertEqual(choose_best_parse_test('للدار'), 'دار')
 
     def test_con_noun_poss_parse(self):
-        self.assertEqual(choose_best_parse_test('ودارها'),
-        'دار')
+        self.assertEqual(choose_best_parse_test('ودارها'), 'دار')
 
     def test_prep_noun_poss(self):
-        self.assertEqual(choose_best_parse_test('لدارهم'),
-        'دار')
+        self.assertEqual(choose_best_parse_test('لدارهم'), 'دار')
 
 
 class ChooseBestPronounParseTest(TestCase):
@@ -298,7 +274,3 @@ class ChooseBestUninflectedParseTest(TestCase):
     def test_unin_parse8(self):
         self.assertEqual(choose_best_parse_test('ولكتاب'),
         'كتاب')
-
-
-    # def test_unin_parse7(self):
-    #     self.assertEqual(choose_best_parse_test('word'), 'parse')
