@@ -30,12 +30,29 @@ class TestParser(TestCase):
         string = 'والكتاب'
         p = Parser(string)
         parse = p.parse()
-        print("parse is ", parse)
         expected_output = [('و', 'C'), ('ال', 'DET'), ('كتاب', 'N')]
         self.assertEqual(expected_output, parse)
 
+    def test_past_verb(self):
+        string = 'مشينا'
+        p = Parser(string)
+        parse = p.parse()
+        expected_output = [('مشي', 'VBD'), ('نا', 'INFL')]
+        self.assertEqual(expected_output, parse)
+
+    def test_present_verb(self):
+        string = 'نمشيو'
+        p = Parser(string)
+        parse = p.parse()
+        expected_output = [('ن', 'INFL'), ('مشي', 'VBD'), ('و', 'INFL')]
+        self.assertEqual(expected_output, parse)
+
     # def test_real_sentences(self):
-    #     test_sent = 'ومن وقتاش رجعت تحكي معاه المدير؟'
-    #     test_key = ['من', 'وقتاش', 'رجع', 'حكي', 'مع', 'مدير']
-    #     lemma_list = parser(test_sent)
-    #     self.assertEqual(lemma_list, test_key)
+    #     string = 'ومن وقتاش رجعت تحكي معاه المدير؟'
+    #     p = Parser(string)
+    #     parse = p.parse()
+    #     print("parse is ", parse)
+    #     expected_output = [('و', 'C'), ('من', 'P'), ('وقتاش', 'PART'), ('رجعت', 'VBD'),
+    #                        ('تحكي', 'VBZ'), ('معا', 'PART'), ('ه', 'PRO'), ('ال', 'DET'),
+    #                        ('مدير', 'N'), ('؟', 'PUNCT')]
+    #     self.assertEqual(expected_output, parse)

@@ -4,7 +4,7 @@ from pyparsing import StringEnd, oneOf, Optional, Literal, SkipTo, FollowedBy
 endOfString = StringEnd()
 
 conjunctions = ['و']
-#affixed_prepositions = ['ل', 'ب', 'م']
+# affixed_prepositions = ['ل', 'ب', 'م']
 prepositions = ['ل','ب', 'في', 'علي', 'من']
 
 pronouns = ['انت', 'انتي', 'انا', 'اني', 'هو', 'هي', 'هوّ', 'هيّ'
@@ -44,21 +44,21 @@ vbd_suffix = oneOf(vbd_suffixes)  + Optional( oneOf(dir_obj_suffixes) ) + \
 # Nouns
 
 # كتابها --> كتاب + ها
-NS = SkipTo(noun_suffix | endOfString)("stem") + noun_suffix("suffix")
-NS.setName('NS')
+N_PRO = SkipTo(noun_suffix | endOfString)("stem") + noun_suffix("suffix")
+N_PRO.setName('N_PRO')
 
 # وكتابها --> و + كتاب + ها
-C_NS = oneOf(conjunctions) ("prefix") + SkipTo(noun_suffix | endOfString)("stem") + noun_suffix("suffix")
-C_NS.setName('C_NS')
+C_N_PRO = oneOf(conjunctions) ("prefix") + SkipTo(noun_suffix | endOfString)("stem") + noun_suffix("suffix")
+C_N_PRO.setName('C_N_PRO')
 
 # لكتابها --> ل + كتاب + ها
-P_NS = oneOf(prepositions) ("prefix") + SkipTo(noun_suffix | endOfString)("stem") + noun_suffix("suffix")
-P_NS.setName('P_NS')
+P_N_PRO = oneOf(prepositions) ("prefix") + SkipTo(noun_suffix | endOfString)("stem") + noun_suffix("suffix")
+P_N_PRO.setName('P_N_PRO')
 
 # ولكتابها --> و + ل + كتاب + ها
-C_P_NS = ( oneOf(conjunctions) + oneOf(prepositions) )("prefix") + SkipTo(noun_suffix | endOfString)("stem") + \
-    noun_suffix("suffix")
-C_P_NS.setName('C_P_NS')
+C_P_N_PRO = (oneOf(conjunctions) + oneOf(prepositions))("prefix") + SkipTo(noun_suffix | endOfString)("stem") + \
+            noun_suffix("suffix")
+C_P_N_PRO.setName('C_P_N_PRO')
 
 # الكتاب --> ال + كتاب
 DET_N =  oneOf(def_art)("prefix") + SkipTo(endOfString)("stem")
@@ -81,30 +81,32 @@ C_P_DET_N.setName('C_P_DET_N')
 
 # Pronouns
 
-# مانيش --> ما + ني + ش
-NEG_PRO = ( Literal("ما")('prefix') + oneOf(dir_obj_suffixes)("stem") + \
-    Optional( Literal("ش") )('suffix') ) + FollowedBy(endOfString)
-NEG_PRO.setName('NEG_PRO')
+# مانيش --> ما + ني + ش  #TODO remove these and add unanalyzed to pronouns
+NEG_PRO_NEG = (Literal("ما")('prefix') + oneOf(dir_obj_suffixes)("stem") +
+               Optional( Literal("ش"))('suffix')) + FollowedBy(endOfString)
+NEG_PRO_NEG.setName('NEG_PRO_NEG')
 
-C_NEG_PRO = ( oneOf(conjunctions) + Literal("ما") ) ("prefix") + \
-    oneOf(dir_obj_suffixes)('stem') + Optional( Literal("ش") )('suffix') + \
-    FollowedBy(endOfString)
-C_NEG_PRO.setName('C_NEG_PRO')
+C_NEG_PRO_NEG = (oneOf(conjunctions) + Literal("ما")) ("prefix") + \
+                oneOf(dir_obj_suffixes)('stem') + Optional( Literal("ش"))('suffix') + \
+                FollowedBy(endOfString)
+C_NEG_PRO_NEG.setName('C_NEG_PRO_NEG')
 
 # ماهيش --> ما + هي + ش
 INT_PRO = Optional ( Literal("ما") )("prefix") + oneOf(pronouns)("stem") + \
-    ( Literal("ش") + Optional( Literal("ي") ) + \
+    ( Literal("ش") + Optional( Literal("ي") ) +
     FollowedBy(endOfString) )("suffix")
 INT_PRO.setName('INT_PRO')
 
-EMPH = oneOf(emphatics)('prefix') + oneOf(dir_obj_suffixes)("stem") + \
-    Optional( Literal("ش") )('suffix')  + FollowedBy(endOfString)
-EMPH.setName('EMPH')
+EMPH_PRO = (oneOf(emphatics)('prefix') + oneOf(dir_obj_suffixes)("stem") +
+           #Optional( Literal("ش") )('suffix') + \
+           FollowedBy(endOfString))
+EMPH_PRO.setName('EMPH_PRO')
 
-C_EMPH = oneOf(conjunctions)("prefix") + oneOf(emphatics)('prefix') +  \
-    oneOf(dir_obj_suffixes)("stem") + Optional( Literal("ش") )('suffix') + \
-    FollowedBy(endOfString)
-C_EMPH.setName('C_EMPH')
+C_EMPH_PRO = (oneOf(conjunctions)("prefix") + oneOf(emphatics)('prefix') +
+             oneOf(dir_obj_suffixes)("stem") +
+             #Optional( Literal("ش") )('suffix') + \
+             FollowedBy(endOfString))
+C_EMPH_PRO.setName('C_EMPH_PRO')
 
 C_PRO = oneOf(conjunctions)("prefix") + oneOf(pronouns)("stem") + \
     FollowedBy(endOfString)
@@ -138,18 +140,18 @@ NEG_VBZ = ( Optional( oneOf("م ما") ) + oneOf(vbz_prefixes)  )("prefix") + \
             ( Optional(vbz_suffix) + Literal("ش") + endOfString )("suffix")
 NEG_VBZ.setName('NEG_VBZ')
 
-C_NEG_VBZ = ( oneOf(conjunctions) + Optional( oneOf("م ما" ) + oneOf(vbz_prefixes)  )("prefix") + \
-            SkipTo( vbz_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") + \
+C_NEG_VBZ = ( oneOf(conjunctions) + Optional( oneOf("م ما" ) + oneOf(vbz_prefixes)  )("prefix") +
+            SkipTo( vbz_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") +
             ( Optional(vbz_suffix) + Literal("ش") + endOfString )("suffix") )
 C_NEG_VBZ.setName('C_NEG_VBZ')
 
-NEG_VBD = ( Optional( oneOf("م ما" ) )("prefix") + \
-            SkipTo( vbd_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") + \
+NEG_VBD = ( Optional( oneOf("م ما" ) )("prefix") +
+            SkipTo( vbd_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") +
             (Optional(vbd_suffix) + Literal("ش") + endOfString)("suffix") )
 NEG_VBD.setName('NEG_VBD')
 
-C_NEG_VBD = ( Optional(oneOf(conjunctions)) + Optional( oneOf("م ما" ) )("prefix") + \
-            SkipTo( vbd_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") + \
+C_NEG_VBD = ( Optional(oneOf(conjunctions)) + Optional( oneOf("م ما" ) )("prefix") +
+            SkipTo( vbd_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") +
             (Optional(vbd_suffix) + Literal("ش") + endOfString)("suffix") )
 C_NEG_VBD.setName('C_NEG_VBD')
 
@@ -171,9 +173,9 @@ C_P_UNIN.setName("C_P_UNIN")
 
 
 
-word_types = [ NS, C_NS, P_NS, C_P_NS, DET_N, C_DET_N, P_DET_N, C_P_DET_N,              # Nouns
-              NEG_PRO, C_NEG_PRO, INT_PRO, EMPH, C_EMPH, P_PRO, C_PRO, C_P_PRO,         # Pronouns
-              VBZ, C_VBZ, VBD, C_VBD, NEG_VBZ, C_NEG_VBZ, NEG_VBD, C_NEG_VBD,           # Verbs
-              UNIN, C_UNIN, P_UNIN, C_P_UNIN,]                                          # Uninflected
+word_types = [N_PRO, C_N_PRO, P_N_PRO, C_P_N_PRO, DET_N, C_DET_N, P_DET_N, C_P_DET_N,  # Nouns
+              NEG_PRO_NEG, C_NEG_PRO_NEG, INT_PRO, EMPH_PRO, C_EMPH_PRO, P_PRO, C_PRO, C_P_PRO,  # Pronouns
+              VBZ, C_VBZ, VBD, C_VBD, NEG_VBZ, C_NEG_VBZ, NEG_VBD, C_NEG_VBD,  # Verbs
+              UNIN, C_UNIN, P_UNIN, C_P_UNIN, ]                                          # Uninflected
 
 
