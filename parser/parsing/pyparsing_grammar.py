@@ -1,4 +1,4 @@
-from pyparsing import StringEnd, oneOf, Optional, Literal, SkipTo, FollowedBy
+from pyparsing import StringEnd, oneOf, Optional, Or, Literal, SkipTo, FollowedBy, Combine, And
 
 
 endOfString = StringEnd()
@@ -22,20 +22,20 @@ noun_suffix = oneOf(poss_suffixes) + FollowedBy(endOfString)
 
 
 # Verb Clitics
-vbz_prefixes = ['ان','ن','ت','ي']
+vbz_pre_inflec = ['ان', 'ن', 'ت', 'ي']
 key_vbz_prefixes = ['ي', 'ت', 'ن']
-vbz_suffixes = ['وا', 'و']
-vbd_suffixes = ["ت", "نا", "توا", "و", "وا"]
+vbz_suff_inflec = ['وا', 'و']
+vbd_suff_inflec = ["ت", "نا", "توا", "و", "وا"]
 key_vbd_suffixes = ["ت", "نا", "و", "وا"]
 dir_obj_suffixes = ["ني", "نا", "ك", "كم", "و", "ه", "هو", "ها", "هم"]
 ind_obj_suffixes = ["ي", "نا", "ن", "كم", "و", "ه", "هو", "ها", "هم"]
 
-vbz_suffix = Optional( oneOf(vbz_suffixes) ) + Optional( oneOf(dir_obj_suffixes) ) + \
-                     Optional( Literal("ل") + oneOf(ind_obj_suffixes) )
+vb_do = oneOf(dir_obj_suffixes)
+vb_ido = Literal("ل") + oneOf(ind_obj_suffixes)
+vb_clit = Or(vb_do, Optional(vb_do) + vb_ido)
 
-vbd_suffix = oneOf(vbd_suffixes)  + Optional( oneOf(dir_obj_suffixes) ) + \
-                Optional( Literal("ل") + oneOf(ind_obj_suffixes) )
-
+pre_neg = ['م', 'ما']
+post_neg = ['ش', 'شي']
 
 ##############
 # Word Types #
@@ -122,38 +122,42 @@ C_P_PRO.setName('C_P_PRO')
 
 # Verbs
 
-VBZ = oneOf(vbz_prefixes)("prefix") + SkipTo( vbz_suffix + endOfString | endOfString)("stem") + Optional( (vbz_suffix)("suffix") )
+VBZ = Combine(oneOf(vbz_pre_inflec)("prefix") +
+              SkipTo(oneOf(vbz_suff_inflec, vb_clit) + endOfString | endOfString)("stem") +
+              Optional(oneOf(vbz_suff_inflec))("suffix"))
 VBZ.setName('VBZ')
 
-C_VBZ = ( oneOf(conjunctions) + oneOf(vbz_prefixes) )("prefix") + SkipTo( vbz_suffix + endOfString | endOfString)("stem") + \
-    Optional(vbz_suffix)("suffix")
+VBZ_PRO = VBZ + oneOf(dir_obj_suffixes)
+VBZ_PRO.setName('VBZ_PRO')
+
+VBZ_P_PRO = VBZ + Literal('ل') + oneOf(ind_obj_suffixes)
+VBZ_P_PRO.setName('VBZ_P_PRO')
+
+C_VBZ = oneOf(conjunctions) + VBZ
 C_VBZ.setName('C_VBZ')
 
-VBD = SkipTo( vbd_suffix + endOfString )("stem") + (vbd_suffix + endOfString)("suffix")
+C_VBZ_PRO = oneOf(conjunctions) + VBZ_PRO
+C_VBZ_PRO.setName('C_VBZ_PRO')
+
+VBD = Combine(SkipTo(oneOf(vbd_suff_inflec) + endOfString)("stem") +
+              And(oneOf(vbd_suff_inflec), endOfString)("suffix"))
 VBD.setName('VBD')
 
-C_VBD = oneOf(conjunctions)("prefix") + SkipTo( vbd_suffix + endOfString )("stem") + (vbd_suffix + endOfString)("suffix")
+C_VBD = oneOf(conjunctions) + VBD
 C_VBD.setName('C_VBD')
 
-NEG_VBZ = ( Optional( oneOf("م ما") ) + oneOf(vbz_prefixes)  )("prefix") + \
-            SkipTo( vbz_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") + \
-            ( Optional(vbz_suffix) + Literal("ش") + endOfString )("suffix")
-NEG_VBZ.setName('NEG_VBZ')
+NEG_VBZ_NEG = oneOf(pre_neg) + VBZ + oneOf(post_neg)
+NEG_VBZ_NEG.setName('NEG_VBZ_NEG')
 
-C_NEG_VBZ = ( oneOf(conjunctions) + Optional( oneOf("م ما" ) + oneOf(vbz_prefixes)  )("prefix") +
-            SkipTo( vbz_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") +
-            ( Optional(vbz_suffix) + Literal("ش") + endOfString )("suffix") )
-C_NEG_VBZ.setName('C_NEG_VBZ')
+C_NEG_VBZ_NEG = oneOf(conjunctions) + NEG_VBZ_NEG
+C_NEG_VBZ_NEG.setName('C_NEG_VBZ_NEG')
 
-NEG_VBD = ( Optional( oneOf("م ما" ) )("prefix") +
-            SkipTo( vbd_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") +
-            (Optional(vbd_suffix) + Literal("ش") + endOfString)("suffix") )
-NEG_VBD.setName('NEG_VBD')
+NEG_VBD_NEG = oneOf(pre_neg) + VBD + oneOf(post_neg)
+NEG_VBD_NEG.setName('NEG_VBD_NEG')
 
-C_NEG_VBD = ( Optional(oneOf(conjunctions)) + Optional( oneOf("م ما" ) )("prefix") +
-            SkipTo( vbd_suffix + Literal("ش") + endOfString | Literal("ش") + endOfString )("stem") +
-            (Optional(vbd_suffix) + Literal("ش") + endOfString)("suffix") )
-C_NEG_VBD.setName('C_NEG_VBD')
+C_NEG_VBD_NEG = oneOf(conjunctions) + NEG_VBD_NEG
+C_NEG_VBD_NEG.setName('C_NEG_VBD_NEG')
+
 
 
 # Uninflected
@@ -175,7 +179,7 @@ C_P_UNIN.setName("C_P_UNIN")
 
 word_types = [N_PRO, C_N_PRO, P_N_PRO, C_P_N_PRO, DET_N, C_DET_N, P_DET_N, C_P_DET_N,  # Nouns
               NEG_PRO_NEG, C_NEG_PRO_NEG, INT_PRO, EMPH_PRO, C_EMPH_PRO, P_PRO, C_PRO, C_P_PRO,  # Pronouns
-              VBZ, C_VBZ, VBD, C_VBD, NEG_VBZ, C_NEG_VBZ, NEG_VBD, C_NEG_VBD,  # Verbs
+              VBZ, C_VBZ, VBD, C_VBD, NEG_VBZ_NEG, C_NEG_VBZ_NEG, NEG_VBD_NEG, C_NEG_VBD_NEG,  # Verbs
               UNIN, C_UNIN, P_UNIN, C_P_UNIN, ]                                          # Uninflected
 
 

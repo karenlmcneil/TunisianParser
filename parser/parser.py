@@ -56,9 +56,9 @@ class Parser:
                 self.parsed_list.append(saved_parses[word])
                 continue
             parse_dict = stemmer(word)
-            # print(parse_dict)
+            # print("\nParse dict: ", parse_dict)
             parse, pos = choose_best_parse(parse_dict)
-            # print(parse)
+            # print("\nChosen parse: ", parse)
             pos_list = pos.split('_')
             # try:
             #     stem = parse.stem.asList()[0]  # because stem is sometimes a list
@@ -83,7 +83,7 @@ class Parser:
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--string", type=str, default="../sts_strings/stsbenchmark/sts-dev.csv",
+    argparser.add_argument("--string", type=str,
                            help="string to parse")
     args = argparser.parse_args()
     Parser(args.string)

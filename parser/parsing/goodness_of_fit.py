@@ -1,7 +1,7 @@
 import nltk
 import os
 
-from parser.parsing.pyparsing_grammar import vbz_suffixes, \
+from parser.parsing.pyparsing_grammar import vbz_suff_inflec, \
         poss_suffixes, def_art, def_art_short
 from parser.parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
     key_vbd_suffixes as vbd_suffixes, dir_obj_suffixes, pronouns
@@ -108,17 +108,17 @@ def make_alt_verb_forms(parse):
             for pre in [p for p in vbz_prefixes if p != prefix]:
                 word_forms.append(pre + stem)
                 if suffix:
-                    for suf in [s for s in vbz_suffixes if s != suffix]:
+                    for suf in [s for s in vbz_suff_inflec if s != suffix]:
                         word_forms.append(pre + stem + suf)
                 else:
-                    for suf in vbz_suffixes:
+                    for suf in vbz_suff_inflec:
                         word_forms.append(pre + stem + suf)
         elif suffix and not prefix:
             for suf in [s for s in vbd_suffixes if s != suffix]:
                 word_forms.append(stem + suf)
             for pre in vbz_prefixes:
                 word_forms.append(pre + stem)
-                for suf in vbz_suffixes:
+                for suf in vbz_suff_inflec:
                     word_forms.append(pre + stem + suf)
     return stem, set(word_forms)
 
@@ -128,7 +128,7 @@ def make_alt_unin_verb_forms(parse):
     word_forms = []
     for pre in vbz_prefixes:
         word_forms.append(pre + stem)
-        for suf in vbz_suffixes:
+        for suf in vbz_suff_inflec:
             word_forms.append(pre + stem + suf)
     for suf in vbd_suffixes:
         word_forms.append(stem + suf)
@@ -179,8 +179,8 @@ function_dict = {
     'VBZ' : make_alt_verb_forms,
     'VBD' : make_alt_verb_forms,
     'C_VBD' : make_alt_verb_forms,
-    'NEG_VBZ' : make_alt_verb_forms,
-    'C_NEG_VBZ' : make_alt_verb_forms,
+    'NEG_VBZ_NEG' : make_alt_verb_forms,
+    'C_NEG_VBZ_NEG' : make_alt_verb_forms,
     'NEG_VBD' : make_alt_verb_forms,
     'C_NEG_VBD' : make_alt_verb_forms,
     #uninflected

@@ -34,18 +34,43 @@ class TestParser(TestCase):
         self.assertEqual(expected_output, parse)
 
     def test_past_verb(self):
-        string = 'مشينا'
+        string = 'كتبت'
         p = Parser(string)
         parse = p.parse()
-        expected_output = [('مشي', 'VBD'), ('نا', 'INFL')]
+        expected_output = [('كتبت', 'VBD')]
+        self.assertEqual(expected_output, parse)
+
+    def test_past_verb_defective(self):
+        string = 'مشيت'
+        p = Parser(string)
+        parse = p.parse()
+        expected_output = [('مشيت', 'VBD')]
+        self.assertEqual(expected_output, parse)
+
+    def test_conj_past_verb(self):
+        string = 'وكتبت'
+        p = Parser(string)
+        parse = p.parse()
+        expected_output = [('و', 'C'), ('كتبت', 'VBD')]
         self.assertEqual(expected_output, parse)
 
     def test_present_verb(self):
         string = 'نمشيو'
         p = Parser(string)
         parse = p.parse()
-        expected_output = [('ن', 'INFL'), ('مشي', 'VBD'), ('و', 'INFL')]
+        expected_output = [('نمشيو', 'VBZ')]
         self.assertEqual(expected_output, parse)
+
+    def test_conj_present_verb(self):
+        string = 'ونمشيو'
+        p = Parser(string)
+        parse = p.parse()
+        expected_output = [('و', 'C'), ('نمشيو', 'VBZ')]
+        self.assertEqual(expected_output, parse)
+
+    def test_fail(self):
+        # مشينا، عطيهولي، ما عطيهوليش
+        self.fail('Write tests for other verb types')
 
     # def test_real_sentences(self):
     #     string = 'ومن وقتاش رجعت تحكي معاه المدير؟'
