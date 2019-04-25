@@ -7,7 +7,7 @@ from parsing.parse_eval import evaluate_parser, evaluate_parser_stem, make_binar
 class ParserEvalTest(TestCase):
 
     def test_gold_standard_exists(self):
-        self.assertTrue(os.path.exists('parser/data/arabic_testing.txt'))
+        self.assertTrue(os.path.exists('data/arabic_testing.txt'))
 
     # @skip  #this takes a long time to run
     def test_evaluate_parser(self):
@@ -24,8 +24,8 @@ class ParserEvalTest(TestCase):
 class ParserStemEvalTest(TestCase):
 
     def test_stem_gold_standard_exists(self):
-        self.assertTrue(os.path.exists('parser/data/arabic_stem_testing.txt'))
-        self.assertTrue(os.path.exists('parser/data/arabic_test_string.txt'))
+        self.assertTrue(os.path.exists('data/arabic_stem_testing.txt'))
+        self.assertTrue(os.path.exists('data/arabic_test_string.txt'))
 
     def test_evaluate_parser_stem(self):
         accuracy = evaluate_parser_stem(data_length=2000)

@@ -1,4 +1,4 @@
-from pyparsing import StringEnd, oneOf, Optional, Or, Literal, SkipTo, FollowedBy, Combine, And
+from pyparsing import StringEnd, oneOf, Optional, Or, Literal, SkipTo, FollowedBy, Combine
 
 
 endOfString = StringEnd()
@@ -20,7 +20,6 @@ poss_suffixes = ["ي", "يا", "نا", "ك", "كم", "و", "ه", "ها", "هم"]
 
 noun_suffix = oneOf(poss_suffixes) + FollowedBy(endOfString)
 
-
 # Verb Clitics
 vbz_pre_inflec = ['ان', 'ن', 'ت', 'ي']
 key_vbz_prefixes = ['ي', 'ت', 'ن']
@@ -32,10 +31,11 @@ ind_obj_suffixes = ["ي", "نا", "ن", "كم", "و", "ه", "هو", "ها", "ه�
 
 vb_do = oneOf(dir_obj_suffixes)
 vb_ido = Literal("ل") + oneOf(ind_obj_suffixes)
-vb_clit = Or(vb_do, Optional(vb_do) + vb_ido)
+vb_clit = Or([vb_do, Optional(vb_do) + vb_ido])
 
 pre_neg = ['م', 'ما']
 post_neg = ['ش', 'شي']
+
 
 ##############
 # Word Types #
@@ -120,7 +120,10 @@ C_P_PRO = ( oneOf(conjunctions) + oneOf(prepositions) )('prefix') + \
     oneOf(dir_obj_suffixes)("stem") + FollowedBy(endOfString)
 C_P_PRO.setName('C_P_PRO')
 
-# Verbs
+
+#################
+    #VERBS#
+#################
 
 VBZ = Combine(oneOf(vbz_pre_inflec)("prefix") +
               SkipTo(oneOf(vbz_suff_inflec, vb_clit) + endOfString | endOfString)("stem") +
@@ -133,18 +136,46 @@ VBZ_PRO.setName('VBZ_PRO')
 VBZ_P_PRO = VBZ + Literal('ل') + oneOf(ind_obj_suffixes)
 VBZ_P_PRO.setName('VBZ_P_PRO')
 
+VBZ_PRO_P_PRO = VBZ + oneOf(dir_obj_suffixes) + Literal('ل') + oneOf(ind_obj_suffixes)
+VBZ_PRO_P_PRO.setName('VBZ_PRO_P_PRO')
+
 C_VBZ = oneOf(conjunctions) + VBZ
 C_VBZ.setName('C_VBZ')
 
 C_VBZ_PRO = oneOf(conjunctions) + VBZ_PRO
 C_VBZ_PRO.setName('C_VBZ_PRO')
 
-VBD = Combine(SkipTo(oneOf(vbd_suff_inflec) + endOfString)("stem") +
-              And(oneOf(vbd_suff_inflec), endOfString)("suffix"))
+C_VBZ_P_PRO = oneOf(conjunctions) + VBZ + Literal('ل') + oneOf(ind_obj_suffixes)
+C_VBZ_P_PRO.setName('C_VBZ_P_PRO')
+
+C_VBZ_PRO_P_PRO = oneOf(conjunctions) + VBZ + oneOf(dir_obj_suffixes) + Literal('ل') + oneOf(ind_obj_suffixes)
+C_VBZ_PRO_P_PRO.setName('C_VBZ_PRO_P_PRO')
+
+VBD = Combine(SkipTo(oneOf(vbd_suff_inflec) + Or([vb_clit + endOfString, endOfString]))("stem") +
+              oneOf(vbd_suff_inflec)("suffix"))
 VBD.setName('VBD')
+
+VBD_PRO = VBD + oneOf(dir_obj_suffixes)
+VBD_PRO.setName('VBD_PRO')
+
+VBD_P_PRO = VBD + Literal('ل') + oneOf(ind_obj_suffixes)
+VBD_P_PRO.setName('VBD_P_PRO')
+
+VBD_PRO_P_PRO = VBD + oneOf(dir_obj_suffixes) + Literal('ل') + oneOf(ind_obj_suffixes)
+VBD_PRO_P_PRO.setName('VBD_PRO_P_PRO')
 
 C_VBD = oneOf(conjunctions) + VBD
 C_VBD.setName('C_VBD')
+
+C_VBD_PRO = oneOf(conjunctions) + VBD + oneOf(dir_obj_suffixes)
+C_VBD_PRO.setName('C_VBD_PRO')
+
+C_VBD_P_PRO = oneOf(conjunctions) + VBD + Literal('ل') + oneOf(ind_obj_suffixes)
+C_VBD_P_PRO.setName('C_VBD_P_PRO')
+
+C_VBD_PRO_P_PRO = oneOf(conjunctions) + VBD + oneOf(dir_obj_suffixes) + Literal('ل') + oneOf(ind_obj_suffixes)
+C_VBD_PRO_P_PRO.setName('C_VBD_PRO_P_PRO')
+
 
 NEG_VBZ_NEG = oneOf(pre_neg) + VBZ + oneOf(post_neg)
 NEG_VBZ_NEG.setName('NEG_VBZ_NEG')
@@ -175,11 +206,22 @@ C_P_UNIN = ( oneOf(conjunctions) + oneOf(prepositions) )("prefix") + \
     SkipTo(endOfString)("stem")
 C_P_UNIN.setName("C_P_UNIN")
 
+UNINVBD_PRO = SkipTo(vb_do + endOfString)("stem") + vb_do("suffix")
+UNINVBD_PRO.setName('UNINVBD_PRO')
 
+UNINVBD_PRO_P_PRO = SkipTo(vb_clit + endOfString)("stem") + vb_clit("suffix")
+UNINVBD_PRO_P_PRO.setName('UNINVBD_PRO_P_PRO')
+
+UNINVBD_P_PRO = SkipTo(vb_ido + endOfString)("stem") + vb_ido("suffix")
+UNINVBD_P_PRO.setName('UNINVBD_P_PRO')
+
+# TODO: Add other varients of uninfl vbd
 
 word_types = [N_PRO, C_N_PRO, P_N_PRO, C_P_N_PRO, DET_N, C_DET_N, P_DET_N, C_P_DET_N,  # Nouns
               NEG_PRO_NEG, C_NEG_PRO_NEG, INT_PRO, EMPH_PRO, C_EMPH_PRO, P_PRO, C_PRO, C_P_PRO,  # Pronouns
-              VBZ, C_VBZ, VBD, C_VBD, NEG_VBZ_NEG, C_NEG_VBZ_NEG, NEG_VBD_NEG, C_NEG_VBD_NEG,  # Verbs
-              UNIN, C_UNIN, P_UNIN, C_P_UNIN, ]                                          # Uninflected
+              VBZ, VBZ_PRO, VBZ_P_PRO, VBZ_PRO_P_PRO, C_VBZ, C_VBZ_PRO, C_VBZ_P_PRO, C_VBZ_PRO_P_PRO, #VBZ
+              VBD, VBD_PRO, VBD_P_PRO, VBD_PRO_P_PRO, C_VBD, C_VBD_PRO, C_VBD_P_PRO, C_VBD_PRO_P_PRO,# VBD
+              NEG_VBZ_NEG, C_NEG_VBZ_NEG, NEG_VBD_NEG, C_NEG_VBD_NEG,# Neg verbs
+              UNIN, C_UNIN, P_UNIN, C_P_UNIN, UNINVBD_PRO, UNINVBD_P_PRO]  # Uninflected
 
 

@@ -1,25 +1,23 @@
 from unittest import TestCase, skip
 
-from parsing.stemmer import stemmer
+from parsing.stemmer import stemmer, extract_stem
 from parsing.goodness_of_fit import  \
     make_alt_unin_verb_forms, make_alt_verb_forms, compute_ave_freq, \
     choose_best_parse, make_alt_noun_forms
 
 
-def choose_best_parse_test(word):
+def choose_best_stem_test(word, debug=False):
     parse_dict = stemmer(word)
-    best_parse, word_type = choose_best_parse(parse_dict, debug=False)
-    try:
-        stem = best_parse.stem.asList()[0]
-    except:
-        stem = best_parse.stem
+    if debug: print("Parse dict is", parse_dict)
+    best_parse, word_type = choose_best_parse(parse_dict, debug=debug)
+    stem = extract_stem(best_parse)
     return stem
 
 
 class FreqDistTest(TestCase):
 
     def test_corpus_file_for_freq_dist_exists(self):
-        corpus = '../parser/data/corpus_clean.txt'
+        corpus = 'data/corpus_clean.txt'
         self.assertEqual(str(type(corpus)), "<class 'str'>")
 
 
@@ -89,188 +87,177 @@ class ComputeAveFreqTest(TestCase):
 
 
 class ChooseBestVBDParseTest(TestCase):
+    """
+    Test suite for evaluating parses of past tense verbs of various types (sound,
+    assimilated, defective, hollow) with various affixes. Tests that correct stem
+    (i.e. uninflected verb) is returned, e.g. wktbthA --> ktb.
+    """
 
     def test_vbd_parse(self):
-        self.assertEqual(choose_best_parse_test('كتبت'),
-        'كتب')
+        p = choose_best_stem_test('كتبت')
+        self.assertEqual('كتب', p)
 
-    @skip("Not fixable - must parse this type manually")
     def test_assim_vbd_parse(self):
-        self.assertEqual(choose_best_parse_test('وصلت'),
-        'وصل')
+        p = choose_best_stem_test('وصلت')
+        self.assertEqual('وصل', p)
 
     def test_con_assim_vbd_parse(self):
-        self.assertEqual(choose_best_parse_test('ووصلت'),
-        'وصل')
+        p = choose_best_stem_test('ووصلت')
+        self.assertEqual('وصل', p)
 
     def test_defective_vbd_parse(self):
-        self.assertEqual(choose_best_parse_test('مشيت'),
-        'مشي')
+        p = choose_best_stem_test('مشيت')
+        self.assertEqual('مشي', p)
 
     def test_con_defective_vbd_parse(self):
-        self.assertEqual(choose_best_parse_test('ومشيت'),
-        'مشي')
+        p = choose_best_stem_test('ومشيت')
+        self.assertEqual('مشي', p)
 
     def test_vbd_indobj_parse(self):
-        self.assertEqual(choose_best_parse_test('قالتلي'), 'قال')
+        p = choose_best_stem_test('قالتلي')
+        self.assertEqual('قال', p)
 
-    @skip("Root too short. Fixable?")
+    @skip("Root too short.")
     def test_short_vbd_indobj_parse(self):
-        self.assertEqual(choose_best_parse_test('قتلي'),
-        'قال')
+        self.assertEqual('قال', choose_best_stem_test('قتلي'))
 
     def test_defective_vbd_dirobj_parse(self):
-        self.assertEqual(choose_best_parse_test('عطيتني'),
-        'عطي')
+        p = choose_best_stem_test('عطيتني')
+        self.assertEqual('عطي', p)
 
-    # def test_vbd_parse(self):
-    #     self.assertEqual(choose_best_parse_test('word'), 'parse')
+    def test_uninf_vbd_dirobj(self):
+        p = choose_best_stem_test('كتبها')
+        self.assertEqual('كتب', p)
 
     def test_doubly_weak_vbd_parse(self):
-        self.assertEqual(choose_best_parse_test('وليت'), 'ولي')
+        p = choose_best_stem_test('وليت')
+        self.assertEqual('ولي', p)
 
 
 class ChooseBestVBZParseTest(TestCase):
 
     def test_vbz_parse(self):
-        self.assertEqual(choose_best_parse_test('يكتبوا'), 'كتب')
+        self.assertEqual('كتب', choose_best_stem_test('يكتبوا'))
 
     def test_defective_vbz_parse1(self):
-        self.assertEqual(choose_best_parse_test('يمشي'), 'مشي')
+        self.assertEqual('مشي', choose_best_stem_test('يمشي'))
 
     def test_defective_vbz_parse2(self):
-        self.assertEqual(choose_best_parse_test('يمشيوا'), 'مشي')
+        self.assertEqual('مشي', choose_best_stem_test('يمشيوا'))
 
     def test_doubly_weak_vbz_parse1(self):
-        self.assertEqual(choose_best_parse_test('يوصي'), 'وصي')
+        self.assertEqual('وصي', choose_best_stem_test('يوصي'))
 
-    @skip("Not fixable - must parse this type manually")
     def test_doubly_weak_vbz_parse2(self):
-        self.assertEqual(choose_best_parse_test('يولي'), 'ولي')
+        self.assertEqual('ولي', choose_best_stem_test('يولي'))
 
-
+@skip
 class ChooseBestNegParseTest(TestCase):
 
     def test_neg_parse1(self):
-        self.assertEqual(choose_best_parse_test('مانحبش'), 'حب')
+        self.assertEqual('حب', choose_best_stem_test('مانحبش'))
 
     def test_neg_parse2(self):
-        self.assertEqual(choose_best_parse_test('منحبش'), 'حب')
+        self.assertEqual('حب', choose_best_stem_test('منحبش'))
 
     def test_neg_parse3(self):
-        self.assertEqual(choose_best_parse_test('مانعرفوش'), 'عرف')
+        self.assertEqual('عرف', choose_best_stem_test('مانعرفوش'))
 
     def test_neg_parse4(self):
-        self.assertEqual(choose_best_parse_test('ماتقولش'), 'قول')
+        self.assertEqual('قول', choose_best_stem_test('ماتقولش'))
 
     def test_neg_parse5(self):
-        self.assertEqual(choose_best_parse_test('ماقلتوليش'), 'قل')
+        self.assertEqual('قل', choose_best_stem_test('ماقلتوليش'))
 
     @skip
     def test_neg_parse6(self):
-        self.assertEqual(choose_best_parse_test('وماحبيتش'), 'حب')
+        self.assertEqual('حب', choose_best_stem_test('وماحبيتش'))
 
 
 class ChooseBestNounParseTest(TestCase):
 
     def test_best_detnoun_parse(self):
-        self.assertEqual(choose_best_parse_test('الكتاب'), 'كتاب')
+        self.assertEqual('كتاب', choose_best_stem_test('الكتاب'))
 
     def test_best_fem_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('الكرهبة'), 'كرهبة')
+        self.assertEqual('كرهبة', choose_best_stem_test('الكرهبة'))
 
     def test_nisba_parse(self):
-        self.assertEqual(choose_best_parse_test('العربي'), 'عربي')
+        self.assertEqual('عربي', choose_best_stem_test('العربي'))
 
     def test_defective_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('الجري'), 'جري')
+        self.assertEqual('جري', choose_best_stem_test('الجري'))
 
     def test_con_det_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('والدار'), 'دار')
+        self.assertEqual('دار', choose_best_stem_test('والدار'))
 
     def test_prep_noun_parse(self):
-        self.assertEqual(choose_best_parse_test('للدار'), 'دار')
+        self.assertEqual('دار', choose_best_stem_test('للدار'))
 
     def test_con_noun_poss_parse(self):
-        self.assertEqual(choose_best_parse_test('ودارها'), 'دار')
+        self.assertEqual('دار', choose_best_stem_test('ودارها'))
 
     def test_prep_noun_poss(self):
-        self.assertEqual(choose_best_parse_test('لدارهم'), 'دار')
+        self.assertEqual('دار', choose_best_stem_test('لدارهم'))
 
 
+@skip
 class ChooseBestPronounParseTest(TestCase):
+    # TODO: These are a closed class -- should be added to vocabulary rather than parsed
 
     def test_pronoun_parse1(self):
-        self.assertEqual(choose_best_parse_test('ماكش'),
-        'ك')
+        self.assertEqual('ك', choose_best_stem_test('ماكش'))
 
     def test_pronoun_parse2(self):
-        self.assertEqual(choose_best_parse_test('مانيش'),
-        'ني')
+        self.assertEqual('ني', choose_best_stem_test('مانيش'))
 
     def test_pronoun_parse3(self):
-        self.assertEqual(choose_best_parse_test('ومانيش'),
-        'ني')
+        self.assertEqual('ني', choose_best_stem_test('ومانيش'))
 
     def test_pronoun_parse4(self):
-        self.assertEqual(choose_best_parse_test('ماني'),
-        'ني')
+        self.assertEqual('ني', choose_best_stem_test('ماني'))
 
     def test_pronoun_parse5(self):
-        self.assertEqual(choose_best_parse_test('راني'),
-        'ني')
+        self.assertEqual('ني', choose_best_stem_test('راني'))
 
     def test_pronoun_parse6(self):
-        self.assertEqual(choose_best_parse_test('وهاني'),
-        'ني')
+        self.assertEqual('ني', choose_best_stem_test('وهاني'))
 
     def test_pronoun_parse7(self):
-        self.assertEqual(choose_best_parse_test('ماهيش'),
-        'هي')
+        self.assertEqual('هي', choose_best_stem_test('ماهيش'))
 
     def test_pronoun_parse8(self):
-        self.assertEqual(choose_best_parse_test('وانا'),
-        'انا')
+        self.assertEqual('انا', choose_best_stem_test('وانا'))
 
     def test_pronoun_parse9(self):
-        self.assertEqual(choose_best_parse_test('لك'),
-        'ك')
+        self.assertEqual('ك', choose_best_stem_test('لك'))
 
     def test_pronoun_parse10(self):
-        self.assertEqual(choose_best_parse_test('ولك'),
-        'ك')
+        self.assertEqual('ك', choose_best_stem_test('ولك'))
 
 
 class ChooseBestUninflectedParseTest(TestCase):
 
     def test_unin_parse1(self):
-        self.assertEqual(choose_best_parse_test('كتب'),
-        'كتب')
+        self.assertEqual('كتب', choose_best_stem_test('كتب'))
 
     def test_unin_parse2(self):
-        self.assertEqual(choose_best_parse_test('وصي'),
-        'وصي')
+        self.assertEqual('وصي', choose_best_stem_test('وصي'))
 
     def test_unin_parse3(self):
-        self.assertEqual(choose_best_parse_test('كتاب'),
-        'كتاب')
+        self.assertEqual('كتاب', choose_best_stem_test('كتاب'))
 
     def test_unin_parse4(self):
-        self.assertEqual(choose_best_parse_test('كرهبة'),
-        'كرهبة')
+        self.assertEqual('كرهبة', choose_best_stem_test('كرهبة'))
 
     def test_unin_parse5(self):
-        self.assertEqual(choose_best_parse_test('وكتب'),
-        'كتب')
+        self.assertEqual('كتب', choose_best_stem_test('وكتب'), )
 
     def test_unin_parse6(self):
-        self.assertEqual(choose_best_parse_test('وكتاب'),
-        'كتاب')
+        self.assertEqual('كتاب', choose_best_stem_test('وكتاب'))
 
     def test_unin_parse7(self):
-        self.assertEqual(choose_best_parse_test('لكتاب'),
-        'كتاب')
+        self.assertEqual('كتاب', choose_best_stem_test('لكتاب'))
 
     def test_unin_parse8(self):
-        self.assertEqual(choose_best_parse_test('ولكتاب'),
-        'كتاب')
+        self.assertEqual('كتاب', choose_best_stem_test('ولكتاب'))

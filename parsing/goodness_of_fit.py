@@ -154,7 +154,6 @@ def make_alt_unin_forms(parse):
     return stem, set(word_forms)
 
 
-
 function_dict = {
     #nouns
     'NS' : make_alt_noun_forms,
@@ -188,6 +187,8 @@ function_dict = {
     'C_UNIN' : make_alt_unin_forms,
     'P_UNIN' : make_alt_unin_forms,
     'C_P_UNIN' : make_alt_unin_forms,
+    'UNINVBD_PRO' : make_alt_unin_verb_forms,
+    'UNINVBD_P_PRO' : make_alt_unin_verb_forms,
     }
 
 
@@ -195,7 +196,9 @@ def choose_best_parse(parse_dict, debug=False):
     freq_dict = {}
     for word_type, parse in parse_dict.items():
         prefix = extract_prefix(parse)
-        if prefix and extract_prefix(parse)=='ال':
+        if debug: print("Prefix is ", prefix)
+        if prefix and extract_prefix(parse)=='ال':   # automatically return noun if has def art
+            if debug: print("Returning ", parse_dict[word_type], word_type)
             return parse_dict[word_type], word_type
         func = function_dict.get(word_type)
         # print("Word type is ", word_type)
@@ -212,14 +215,20 @@ def choose_best_parse(parse_dict, debug=False):
         #     func = make_alt_noun_forms()
         # else:
         #     func = None
+        if debug: print("Function chosen is ", func)
         if func:
             stem, word_forms = func(parse)
+            if debug: print("Stem, word_forms are ", stem, word_forms)
             ave_freq = compute_ave_freq(word_forms)
+            if debug: print("Ave freq is ", ave_freq)
             freq_dict[word_type] = ave_freq
     try:
         chosen_word_type = max(freq_dict, key=freq_dict.get)
+        if debug: print("Chosen word type is ", chosen_word_type)
     except TypeError: #if all are 0
+        if debug: print("All freq zero, choosing UNIN")
         chosen_word_type = 'UNIN'
+    if debug: print("Returning ", parse_dict[chosen_word_type], chosen_word_type)
     return parse_dict[chosen_word_type], chosen_word_type
 
 
