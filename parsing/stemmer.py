@@ -1,4 +1,4 @@
-from pyparsing import ParseException
+from pyparsing import ParseException, Literal
 
 from parsing.pyparsing_grammar import word_types
 
@@ -27,9 +27,20 @@ def extract_prefix(pyparsing_object):
     return prefix
 
 
+def add_conj(word_type_list):
+    new_list = []
+    for type in word_type_list:
+        new_list.append(type)
+        new_type = Literal('و') + type
+        new_type.setName('C_' + type.name)
+        new_list.append(new_type)
+    return(new_list)
+
+
 def stemmer(arabic_word):
     parse_dict = {}
-    for word_type in word_types:
+    all_word_types = add_conj(word_types)  # add conjunctions here, to avoid repetition in grammar
+    for word_type in all_word_types:
         try:
             parse = word_type.parseString(arabic_word)
             parse_dict[str(word_type)] = parse #converting pyparsing object
