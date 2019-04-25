@@ -1,7 +1,7 @@
 import os
-from unittest import TestCase, skip
+from unittest import TestCase
 
-from parser.parsing.parse_eval import evaluate_parser, evaluate_parser_stem, make_binary
+from parsing.parse_eval import evaluate_parser, evaluate_parser_stem, make_binary
 
 
 class ParserEvalTest(TestCase):

@@ -1,9 +1,8 @@
-from django.test import TestCase
+from unittest import TestCase
 
-from aeb_parser.preprocessing.ar_ctype import normalize
-from aeb_parser.preprocessing import preprocessor
-from aeb_parser.parser import parser, preprocess
-from aeb_parser.models import Parse
+from preprocessing.ar_ctype import normalize
+from preprocessing import preprocessor
+from parser import parse, preprocess
 
 
 

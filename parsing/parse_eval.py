@@ -1,7 +1,7 @@
 import nltk
 
-from parser.preprocessing.uni2buck import transString
-from parser.parser import Parser
+from preprocessing.uni2buck import transString
+from parser import parse
 
 
 # #**********************************************#
@@ -44,7 +44,7 @@ def log_incorrect_parses(wrong_list):
     wrong_string = ''
     for k,v in wrong_fd.items():
         wrong_string += k + '\t' + str(v) + '\n'
-    outfile = open('parser/data/incorrect_parses_log.txt','w', encoding='utf-8')
+    outfile = open('data/incorrect_parses_log.txt','w', encoding='utf-8')
     outfile.write(wrong_string)
     outfile.close()
     return
@@ -87,22 +87,21 @@ def parse_eval(test_parse_list, gold_parse_list):
 
 
 def evaluate_parser(data_length=2000):
-    gold_string = transString(open('parser/data/arabic_testing.txt','r', encoding='utf-8').read())
+    gold_string = transString(open('data/arabic_testing.txt','r', encoding='utf-8').read())
     gold_parses = gold_string.split()
     test_tokens = gold_string.replace('+','').split()
     test_parses = []
     for word in test_tokens[:data_length]:
-        p = Parser(word)
-        parsed_word = p.parse()[0][0]
+        parsed_word = parse(word)[0][0]
         test_parses.append(parsed_word.replace(' ', '+'))
     accuracy, precision, recall = parse_eval(test_parses, gold_parses[:data_length])
     return accuracy, precision, recall
 
 
 def evaluate_parser_stem(data_length=2000):
-    gl = open('parser/data/arabic_stem_testing.txt', 'r', encoding='utf-8').readlines()
-    tl = open('parser/data/arabic_test_string.txt', 'r', encoding='utf-8').readlines()
-    log = open('parser/data/parse_test_log.txt', 'w', encoding='utf-8')
+    gl = open('data/arabic_stem_testing.txt', 'r', encoding='utf-8').readlines()
+    tl = open('data/arabic_test_string.txt', 'r', encoding='utf-8').readlines()
+    log = open('data/parse_test_log.txt', 'w', encoding='utf-8')
     total_tokens = 0
     for line in gl:
         total_tokens += len(line.split())
@@ -111,8 +110,7 @@ def evaluate_parser_stem(data_length=2000):
     for i, line in enumerate(gl):
         for j, word in enumerate(line.split()):
             test_word = tl[i].split()[j]
-            p = Parser(test_word)
-            parsed_word = p.parse()[0][0]
+            parsed_word = parse(test_word)[0][0]
             parse_pairs.append([word, parsed_word])
     for correct_parse, test_parse in parse_pairs:
         log.write("%s \t %s - " % (correct_parse, test_parse))

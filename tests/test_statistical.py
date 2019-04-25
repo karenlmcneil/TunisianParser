@@ -1,7 +1,7 @@
 from unittest import TestCase, skip
 
-from parser.parsing.stemmer import stemmer
-from parser.parsing.goodness_of_fit import  \
+from parsing.stemmer import stemmer
+from parsing.goodness_of_fit import  \
     make_alt_unin_verb_forms, make_alt_verb_forms, compute_ave_freq, \
     choose_best_parse, make_alt_noun_forms
 

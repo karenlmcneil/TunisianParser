@@ -3,20 +3,21 @@ import argparse
 import nltk
 import re
 
-from .preprocessing import uni2buck
-from .preprocessing.preprocessor import space_mixed_words, test_lang
-from .preprocessing.ar_ctype import normalize
-from .parsing.stemmer import stemmer
-from .parsing.goodness_of_fit import choose_best_parse
+from preprocessing import uni2buck
+from preprocessing.preprocessor import space_mixed_words, test_lang
+from preprocessing.ar_ctype import normalize
+from parsing.stemmer import stemmer
+from parsing.goodness_of_fit import choose_best_parse
 
 
-# def preprocess(string):
+def preprocess(string):
 #     norm_string = ''
 #     for word in string.split(' '):
 #         norm_string += "%s " % space_mixed_words(punct_spacer(normalize(word)))  # TODO: Replace this with own
 #         norm_string = re.sub(' +', ' ', norm_string)
 #     norm_string = norm_string.strip()
 #     return norm_string
+    pass
 
 
 particles = ['باش', 'انت', 'اللي', 'التي', 'الذي', 'الذين', 'الي', 'الله',

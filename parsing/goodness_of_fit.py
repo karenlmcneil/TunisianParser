@@ -1,14 +1,14 @@
 import nltk
 import os
 
-from parser.parsing.pyparsing_grammar import vbz_suff_inflec, \
+from parsing.pyparsing_grammar import vbz_suff_inflec, \
         poss_suffixes, def_art, def_art_short
-from parser.parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
+from parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
     key_vbd_suffixes as vbd_suffixes, dir_obj_suffixes, pronouns
 
-from parser.parsing.stemmer import extract_stem, extract_suffix, extract_prefix
+from parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
-corpus_text_location = 'parser/data/corpus_clean.txt'
+corpus_text_location = 'data/corpus_clean.txt'
 print("current directory is ", os.getcwd())
 corpus_text = open(corpus_text_location, 'r').read()
 fd = nltk.FreqDist(corpus_text.split())
@@ -198,6 +198,20 @@ def choose_best_parse(parse_dict, debug=False):
         if prefix and extract_prefix(parse)=='ال':
             return parse_dict[word_type], word_type
         func = function_dict.get(word_type)
+        # print("Word type is ", word_type)
+        # print("VB in word type ", 'VB' in word_type)
+        # if 'UNIN' in word_type:
+        #     func = make_alt_unin_forms
+        # elif 'VB' in word_type:
+        #     func = make_alt_verb_forms()
+        # elif 'P_PRO' or 'INT_PRO' in word_type:
+        #     func = make_alt_ind_pron_forms()
+        # elif 'PRO' in word_type:
+        #     func = make_alt_affixed_pron_forms()
+        # elif 'N' in word_type:
+        #     func = make_alt_noun_forms()
+        # else:
+        #     func = None
         if func:
             stem, word_forms = func(parse)
             ave_freq = compute_ave_freq(word_forms)
