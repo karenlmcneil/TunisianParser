@@ -117,9 +117,9 @@ class ChooseBestVBDParseTest(TestCase):
         p = choose_best_stem_test('قالتلي')
         self.assertEqual('قال', p)
 
-    @skip("Root too short.")
-    def test_short_vbd_indobj_parse(self):
-        self.assertEqual('قال', choose_best_stem_test('قتلي'))
+    # @skip("Root too short.")
+    # def test_short_vbd_indobj_parse(self):
+    #     self.assertEqual('قال', choose_best_stem_test('قتلي'))
 
     def test_defective_vbd_dirobj_parse(self):
         p = choose_best_stem_test('عطيتني')
@@ -199,41 +199,6 @@ class ChooseBestNounParseTest(TestCase):
 
     def test_prep_noun_poss(self):
         self.assertEqual('دار', choose_best_stem_test('لدارهم'))
-
-
-@skip
-class ChooseBestPronounParseTest(TestCase):
-    # TODO: These are a closed class -- should be added to vocabulary rather than parsed
-
-    def test_pronoun_parse1(self):
-        self.assertEqual('ك', choose_best_stem_test('ماكش'))
-
-    def test_pronoun_parse2(self):
-        self.assertEqual('ني', choose_best_stem_test('مانيش'))
-
-    def test_pronoun_parse3(self):
-        self.assertEqual('ني', choose_best_stem_test('ومانيش'))
-
-    def test_pronoun_parse4(self):
-        self.assertEqual('ني', choose_best_stem_test('ماني'))
-
-    def test_pronoun_parse5(self):
-        self.assertEqual('ني', choose_best_stem_test('راني'))
-
-    def test_pronoun_parse6(self):
-        self.assertEqual('ني', choose_best_stem_test('وهاني'))
-
-    def test_pronoun_parse7(self):
-        self.assertEqual('هي', choose_best_stem_test('ماهيش'))
-
-    def test_pronoun_parse8(self):
-        self.assertEqual('انا', choose_best_stem_test('وانا'))
-
-    def test_pronoun_parse9(self):
-        self.assertEqual('ك', choose_best_stem_test('لك'))
-
-    def test_pronoun_parse10(self):
-        self.assertEqual('ك', choose_best_stem_test('ولك'))
 
 
 class ChooseBestUninflectedParseTest(TestCase):

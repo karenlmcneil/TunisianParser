@@ -62,23 +62,7 @@ P_DET_N.setName('P_DET_N')
 
 # Pronouns
 
-# مانيش --> ما + ني + ش  #TODO remove these and add unanalyzed to pronouns
-NEG_PRO_NEG = (Literal("ما")('prefix') + oneOf(dir_obj_suffixes)("stem") +
-               Optional( Literal("ش"))('suffix')) + FollowedBy(endOfString)
-NEG_PRO_NEG.setName('NEG_PRO_NEG')
-
-# ماهيش --> ما + هي + ش
-INT_PRO = Optional ( Literal("ما") )("prefix") + oneOf(pronouns)("stem") + \
-    ( Literal("ش") + Optional( Literal("ي") ) +
-    FollowedBy(endOfString) )("suffix")
-INT_PRO.setName('INT_PRO')
-
-EMPH_PRO = (oneOf(emphatics)('prefix') + oneOf(dir_obj_suffixes)("stem") +
-           #Optional( Literal("ش") )('suffix') + \
-           FollowedBy(endOfString))
-EMPH_PRO.setName('EMPH_PRO')
-
-P_PRO = oneOf(prepositions)('prefix') + oneOf(dir_obj_suffixes)("stem") + \
+P_PRO = oneOf(prepositions)('prefix') + oneOf(ind_obj_suffixes)("stem") + \
     FollowedBy(endOfString)
 P_PRO.setName('P_PRO')
 
@@ -139,7 +123,10 @@ UNINVBD_PRO_P_PRO.setName('UNINVBD_PRO_P_PRO')
 UNINVBD_P_PRO = SkipTo(vb_ido + endOfString)("stem") + vb_ido("suffix")
 UNINVBD_P_PRO.setName('UNINVBD_P_PRO')
 
-# TODO: Add other varients of uninfl vbd
+
+################
+# WORD CLASSES #
+################
 
 verbs = [VBZ, VBZ_PRO, VBZ_P_PRO, VBZ_PRO_P_PRO, #VBZ
               VBD, VBD_PRO, VBD_P_PRO, VBD_PRO_P_PRO]
@@ -148,7 +135,7 @@ neg_verbs = [NEG_VBZ_NEG, NEG_VBD_NEG]
 
 nouns = [N_PRO, P_N_PRO, DET_N, P_DET_N]
 
-prons = [NEG_PRO_NEG, INT_PRO, EMPH_PRO, P_PRO]
+prons = [P_PRO]
 
 unin = [UNIN, P_UNIN, UNINVBD_PRO, UNINVBD_P_PRO]
 

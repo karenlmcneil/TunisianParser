@@ -20,13 +20,39 @@ def preprocess(string):
     pass
 
 
-particles = ['باش', 'انت', 'اللي', 'التي', 'الذي', 'الذين', 'الي', 'الله',
-             'لو', 'فماش', 'قداش', 'كيباش', 'وقتاش', 'علاه', 'اشنو', 'هذه', 'هاذي',
-             'هذايا', 'غادي', 'بعد', 'لكن', 'انشالله', 'الى', 'من', 'في', 'على', 'بش',
-             ]
+particles = ['باش', 'لو', 'فماش', 'فما', 'ثم', 'ثماش', 'غادي', 'بعد', 'لكن', 'انشالله','بش',]
+pronouns = ['انت', 'انا', 'انتي', 'هو', 'هي', 'هم', 'هما', 'احنا']
+neg_pron = ['ماكش', 'ماكمش', 'ماناش', 'مانيش', 'ماهاش', 'ماهمش', 'ماهواش', 'ماهوش', 'ماهياش', 'ماهيش']
+emph_pron = ['راهو', 'راني', 'راهي', 'راك', 'رانا', 'راهم', 'راو', 'راه',
+    'هاك', 'هاو', 'هاني', 'هانا', 'هاهم', 'هاهي', 'هاكم']
+rel_pron = ['اللي', 'الي']
+dem_pron = ['هذه', 'هاذي', 'هذايا']
+interog = ['قداش', 'كيفاش', 'وقتاش', 'اشنو', 'علاه', 'علاش', 'اشني', 'اشنوه', 'اشنيه']
+prep = ['الى', 'من', 'في', 'على']
+noun = ['الله']
 
 
-saved_parses = {}  # TODO: Save to file
+def load_saved_parses():
+    saved_parses = {}
+    for part in particles:
+        saved_parses[part] = (part, 'PART')
+    for pro in pronouns:
+        saved_parses[pro] = (pro, 'PRO')
+    for np in neg_pron:
+        saved_parses[np] = (np, 'NEG-COP')
+    for ep in emph_pron:
+        saved_parses[ep] = (ep, 'EMPH-PRO')
+    for rp in rel_pron:
+        saved_parses[rp] = (rp, 'REL-PRO')
+    for dp in dem_pron:
+        saved_parses[dp] = (dp, 'DEM-PRO')
+    for intr in interog:
+        saved_parses[intr] = (intr, 'INTEROG')
+    for prepos in prep:
+        saved_parses[prepos] = (prepos, 'P')
+    for nn in noun:
+        saved_parses[nn] = (nn, 'N')
+    return saved_parses
 
 
 def parse(string):
@@ -35,8 +61,7 @@ def parse(string):
     :param string: Tunisian Arabic text
     :return: list: parses in the format ('word', 'POS')
     """
-    for part in particles:
-        saved_parses[part] = (part, 'PART')
+    saved_parses = load_saved_parses()
     tokens = nltk.tokenize.wordpunct_tokenize(string)  # TODO: Need to add preprocessing
     parsed_list = []
     for word in tokens:
@@ -53,28 +78,10 @@ def parse(string):
             parsed_list.append(saved_parses[word])
             continue
         parse_dict = stemmer(word)
-        # print("\nParse dict: ", parse_dict)
         parse, pos = choose_best_parse(parse_dict)
-        # print("\nChosen parse: ", parse)
         pos_list = pos.split('_')
-        # try:
-        #     stem = parse.stem.asList()[0]  # because stem is sometimes a list
-        # except:
-        #     stem = parse.stem
         mapped = list(zip(parse, pos_list))
         parsed_list.extend(mapped)
-                # for part in parse.asList():
-                #     pp = ParsePart(part=part, parse=p)
-                #     pp.part_bw = uni2buck.transString(part, reverse=True)
-                #     pp.save()
-    #             else:
-    #                 p.parse = word
-    #                 p.pos = 'FW'
-    #                 p.stem = word
-    #                 parsed_list.append(p.stem)
-    #                 p.save()
-    #                 pp = ParsePart(part=word, parse=p)
-    #                 pp.save()
     return parsed_list
 
 
