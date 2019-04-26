@@ -137,12 +137,15 @@ class ChooseBestVBDParseTest(TestCase):
 class ChooseBestVBZParseTest(TestCase):
 
     def test_vbz_parse(self):
+        self.assertEqual('كتب', choose_best_stem_test('يكتب'))
+
+    def test_vbz_pl_parse(self):
         self.assertEqual('كتب', choose_best_stem_test('يكتبوا'))
 
-    def test_defective_vbz_parse1(self):
+    def test_defective_vbz_def_parse(self):
         self.assertEqual('مشي', choose_best_stem_test('يمشي'))
 
-    def test_defective_vbz_parse2(self):
+    def test_defective_vbz_def_pl_0arse(self):
         self.assertEqual('مشي', choose_best_stem_test('يمشيوا'))
 
     def test_doubly_weak_vbz_parse1(self):
@@ -150,6 +153,24 @@ class ChooseBestVBZParseTest(TestCase):
 
     def test_doubly_weak_vbz_parse2(self):
         self.assertEqual('ولي', choose_best_stem_test('يولي'))
+
+    def test_vbz_do(self):
+        self.assertEqual('كتب', choose_best_stem_test('يكتبها'))
+
+    def test_vbz_pl_do(self):
+        self.assertEqual('كتب', choose_best_stem_test('يكتبوها'))
+
+    def test_vbz_ind(self):
+        self.assertEqual('كتب', choose_best_stem_test('يكتبلها'))
+
+    def test_vbz_do_ind(self):
+        self.assertEqual('كتب', choose_best_stem_test('يكتبهالي'))
+
+    def test_vbz_pl_ind(self):
+        self.assertEqual('كتب', choose_best_stem_test('يكتبولها'))
+
+    def test_vbz_pl_do_ind(self):
+        self.assertEqual('كتب', choose_best_stem_test('يكتبوهالي'))
 
 @skip
 class ChooseBestNegParseTest(TestCase):
