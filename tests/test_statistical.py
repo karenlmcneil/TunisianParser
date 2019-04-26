@@ -151,6 +151,7 @@ class ChooseBestVBZParseTest(TestCase):
     def test_doubly_weak_vbz_parse1(self):
         self.assertEqual('وصي', choose_best_stem_test('يوصي'))
 
+    @skip
     def test_doubly_weak_vbz_parse2(self):
         self.assertEqual('ولي', choose_best_stem_test('يولي'))
 

@@ -1,4 +1,4 @@
-from pyparsing import StringEnd, oneOf, Optional, Or, Literal, SkipTo, FollowedBy, Combine
+from pyparsing import StringEnd, oneOf, Optional, Or, Literal, SkipTo, FollowedBy, Combine, Word, srange
 
 
 endOfString = StringEnd()
@@ -29,13 +29,29 @@ key_vbd_suffixes = ["ت", "نا", "و", "وا"]
 dir_obj_suffixes = ["ني", "نا", "ك", "كم", "و", "ه", "هو", "ها", "هم"]
 ind_obj_suffixes = ["ي", "نا", "ن", "كم", "و", "ه", "هو", "ها", "هم"]
 
-vb_do = oneOf(dir_obj_suffixes)
-vb_ido = Literal("ل") + oneOf(ind_obj_suffixes)
-vb_clit = Or([vb_do, Optional(vb_do) + vb_ido])
+VBZ_SUFF = oneOf(vbz_suff_inflec)
+VB_DO = oneOf(dir_obj_suffixes)
+VB_IDO = Literal("ل") + oneOf(ind_obj_suffixes)
+vb_clit = Or([VB_DO, Optional(VB_DO) + VB_IDO])
+
+VBZ_CLIT = Or([
+    VBZ_SUFF, VB_DO, VB_IDO,
+    (VBZ_SUFF + VB_DO),
+    (VBZ_SUFF + VB_IDO),
+    (VBZ_SUFF + VB_DO + VB_IDO),
+    (VB_DO + VB_IDO)
+])
+
 
 pre_neg = ['م', 'ما']
 post_neg = ['ش', 'شي']
 
+
+# arabicChars = srange(r"[\0x0621-\0x0652,\0x067E,\0x06A4,\0x06A8]")
+# verbStem = Word(arabicChars, exact=3).setName('stem')
+# vbz_pre = oneOf(['ان', 'ن', 'ت', 'ي']).setName('pre')
+# vbz_suff = oneOf(['وا', 'و']).setName('suff')
+# vbz = (vbz_pre + verbStem + vbz_suff).setName('vbz')
 
 ##############
 # Word Types #
@@ -71,9 +87,14 @@ P_PRO.setName('P_PRO')
     #VERBS#
 #################
 
-VBZ = Combine(oneOf(vbz_pre_inflec)("prefix") +
-              SkipTo(oneOf(vbz_suff_inflec, vb_clit) + endOfString | endOfString)("stem") +
-              Optional(oneOf(vbz_suff_inflec))("suffix"))
+# VBZ = Combine(oneOf(vbz_pre_inflec)("prefix") +
+#               SkipTo(oneOf(vbz_suff_inflec, vb_clit) + endOfString | endOfString)("stem") +
+#               Optional(oneOf(vbz_suff_inflec))("suffix"))
+# VBZ.setName('VBZ')
+
+VBZ = oneOf(vbz_pre_inflec)("prefix") + \
+      SkipTo((VBZ_CLIT + endOfString) | endOfString)("stem") + \
+      Optional((VBZ_CLIT)("suffix") )
 VBZ.setName('VBZ')
 
 VBZ_PRO = VBZ + oneOf(dir_obj_suffixes)
@@ -114,13 +135,13 @@ UNIN.setName("UNIN")
 P_UNIN = ( oneOf(prepositions) )("prefix") + SkipTo(endOfString)("stem")
 P_UNIN.setName("P_UNIN")
 
-UNINVBD_PRO = SkipTo(vb_do + endOfString)("stem") + vb_do("suffix")
+UNINVBD_PRO = SkipTo(VB_DO + endOfString)("stem") + VB_DO("suffix")
 UNINVBD_PRO.setName('UNINVBD_PRO')
 
 UNINVBD_PRO_P_PRO = SkipTo(vb_clit + endOfString)("stem") + vb_clit("suffix")
 UNINVBD_PRO_P_PRO.setName('UNINVBD_PRO_P_PRO')
 
-UNINVBD_P_PRO = SkipTo(vb_ido + endOfString)("stem") + vb_ido("suffix")
+UNINVBD_P_PRO = SkipTo(VB_IDO + endOfString)("stem") + VB_IDO("suffix")
 UNINVBD_P_PRO.setName('UNINVBD_P_PRO')
 
 
