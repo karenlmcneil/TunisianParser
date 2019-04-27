@@ -154,43 +154,6 @@ def make_alt_unin_forms(parse):
     return stem, set(word_forms)
 
 
-function_dict = {
-    #nouns
-    'NS' : make_alt_noun_forms,
-    'C_N_PRO' : make_alt_noun_forms,
-    'P_N_PRO' : make_alt_noun_forms,
-    'C_P_N_PRO' : make_alt_noun_forms,
-    'DET_N' : make_alt_noun_forms,
-    'C_DET_N' : make_alt_noun_forms,
-    'P_DET_N' : make_alt_noun_forms,
-    'C_P_DET_N' : make_alt_noun_forms,
-    #pronouns
-    'NEG_PRO_NEG' : make_alt_affixed_pron_forms,
-    'C_NEG_PRO_NEG' : make_alt_affixed_pron_forms,
-    'INT_PRO' : make_alt_ind_pron_forms,
-    'EMPH_PRO' : make_alt_affixed_pron_forms,
-    'C_EMPH_PRO' : make_alt_affixed_pron_forms,
-    'P_PRO' : make_alt_ind_pron_forms,
-    'C_PRO' : make_alt_affixed_pron_forms,
-    'C_P_PRO' : make_alt_affixed_pron_forms,
-    #verbs
-    'C_VBZ' : make_alt_verb_forms,
-    'VBZ' : make_alt_verb_forms,
-    'VBD' : make_alt_verb_forms,
-    'C_VBD' : make_alt_verb_forms,
-    'NEG_VBZ_NEG' : make_alt_verb_forms,
-    'C_NEG_VBZ_NEG' : make_alt_verb_forms,
-    'NEG_VBD' : make_alt_verb_forms,
-    'C_NEG_VBD' : make_alt_verb_forms,
-    #uninflected
-    'UNIN' : make_alt_unin_forms,
-    'C_UNIN' : make_alt_unin_forms,
-    'P_UNIN' : make_alt_unin_forms,
-    'C_P_UNIN' : make_alt_unin_forms,
-    'UNINVBD_PRO' : make_alt_unin_verb_forms,
-    'UNINVBD_P_PRO' : make_alt_unin_verb_forms,
-    }
-
 
 def choose_best_parse(parse_dict, debug=False):
     freq_dict = {}
@@ -200,21 +163,23 @@ def choose_best_parse(parse_dict, debug=False):
         if prefix and extract_prefix(parse)=='ال':   # automatically return noun if has def art
             if debug: print("Returning ", parse_dict[word_type], word_type)
             return parse_dict[word_type], word_type
-        func = function_dict.get(word_type)
-        # print("Word type is ", word_type)
-        # print("VB in word type ", 'VB' in word_type)
-        # if 'UNIN' in word_type:
-        #     func = make_alt_unin_forms
-        # elif 'VB' in word_type:
-        #     func = make_alt_verb_forms()
-        # elif 'P_PRO' or 'INT_PRO' in word_type:
-        #     func = make_alt_ind_pron_forms()
-        # elif 'PRO' in word_type:
-        #     func = make_alt_affixed_pron_forms()
-        # elif 'N' in word_type:
-        #     func = make_alt_noun_forms()
-        # else:
-        #     func = None
+        # func = function_dict.get(word_type)
+        print("Word type is ", word_type)
+        print("VB in word type ", 'VB' in word_type)
+        if 'UNINVBD' in word_type:
+            func = make_alt_unin_verb_forms
+        elif 'VB' in word_type:
+            func = make_alt_verb_forms
+        elif 'UNIN' in word_type:
+            func = make_alt_unin_forms
+        elif 'N' in word_type:
+            func = make_alt_noun_forms
+        elif 'P_PRO' or 'C_PRO' or 'C_P_PRO' in word_type:
+            func = make_alt_ind_pron_forms
+        elif 'PRO' in word_type:
+            func = make_alt_affixed_pron_forms
+        else:
+            func = None
         if debug: print("Function chosen is ", func)
         if func:
             stem, word_forms = func(parse)

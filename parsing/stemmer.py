@@ -42,8 +42,8 @@ def stemmer(arabic_word):
     all_word_types = add_conj(word_types)  # add conjunctions here, to avoid repetition in grammar
     for word_type in all_word_types:
         try:
-            parse = word_type.parseString(arabic_word)
-            parse_dict[str(word_type)] = parse #converting pyparsing object
+            parse = word_type.parseString(arabic_word, parseAll=True)
+            parse_dict[str(word_type)] = parse  # converting pyparsing object
             # 'word_type' to a string so it can be used for lookup
         except ParseException:
             pass
