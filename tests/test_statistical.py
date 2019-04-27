@@ -173,27 +173,53 @@ class ChooseBestVBZParseTest(TestCase):
     def test_vbz_pl_do_ind(self):
         self.assertEqual('كتب', choose_best_stem_test('يكتبوهالي'))
 
-@skip
-class ChooseBestNegParseTest(TestCase):
 
-    def test_neg_parse1(self):
+class ChooseBestNegVBZParseTest(TestCase):
+
+    def test_vbz_neg(self):
+        self.assertEqual('حب', choose_best_stem_test('نحبش'))
+
+    def test_mA_vbz_neg(self):
         self.assertEqual('حب', choose_best_stem_test('مانحبش'))
 
-    def test_neg_parse2(self):
+    def test_m_vbz_neg(self):
         self.assertEqual('حب', choose_best_stem_test('منحبش'))
 
-    def test_neg_parse3(self):
+    def test_mA_vbz_pl_neg(self):
         self.assertEqual('عرف', choose_best_stem_test('مانعرفوش'))
 
-    def test_neg_parse4(self):
-        self.assertEqual('قول', choose_best_stem_test('ماتقولش'))
+    def test_mA_vbz_do_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('ماتكتبهاش'))
 
-    def test_neg_parse5(self):
+    def test_mA_vbz_ido_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('ماتكتبليش'))
+
+    def test_mA_vbz_do_ido_neg(self):
+        self.assertEqual('قول', choose_best_stem_test('ماتقولهاليش'))
+
+
+class ChooseBestNegVBDParseTest(TestCase):
+
+    def test_vbd_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبتش'))
+
+    def test_mA_vbd_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('ماكتبتش'))
+
+    def test_mA_vbd_do_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('ماكتبتهاش'))
+
+    def test_vbd_ido_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبتهاليش', debug=True))
+
+    def test_mA_vbd_ido_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('ماكتبتهاليش', debug=True))
+
+    def test_mA_vbd_do_ido_neg(self):
         self.assertEqual('قل', choose_best_stem_test('ماقلتوليش'))
 
-    @skip
-    def test_neg_parse6(self):
-        self.assertEqual('حب', choose_best_stem_test('وماحبيتش'))
+    def test_conj_mA_vbd_neg(self):
+        self.assertEqual('حبي', choose_best_stem_test('وماحبيتش'))
 
 
 class ChooseBestNounParseTest(TestCase):
@@ -225,26 +251,50 @@ class ChooseBestNounParseTest(TestCase):
 
 class ChooseBestUninflectedParseTest(TestCase):
 
-    def test_unin_parse1(self):
+    def test_unin_vbd(self):
         self.assertEqual('كتب', choose_best_stem_test('كتب'))
 
-    def test_unin_parse2(self):
+    def test_unin_def_vbd(self):
         self.assertEqual('وصي', choose_best_stem_test('وصي'))
 
-    def test_unin_parse3(self):
+    def test_unin_noun(self):
         self.assertEqual('كتاب', choose_best_stem_test('كتاب'))
 
-    def test_unin_parse4(self):
+    def test_unin_fem_noun(self):
         self.assertEqual('كرهبة', choose_best_stem_test('كرهبة'))
 
-    def test_unin_parse5(self):
-        self.assertEqual('كتب', choose_best_stem_test('وكتب'), )
+    def test_conj_uninfl_vbd_parse(self):
+        self.assertEqual('كتب', choose_best_stem_test('وكتب'))
 
-    def test_unin_parse6(self):
+    def test_uninfl_vbd_do_parse(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبها'))
+
+    def test_uninfl_vbd_ido_parse(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبلي'))
+
+    def test_uninfl_vbd_do_ido_parse(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبهالي'))
+
+    def test_uninfl_vbd_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبش'))
+
+    def test_uninfl_vbd_do_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبهاش'))
+
+    def test_uninfl_vbd_ido_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبليش'))
+
+    def test_uninfl_vbd_do_ido_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('كتبهاليش'))
+
+    def test_uninfl_mA_vbd_neg(self):
+        self.assertEqual('كتب', choose_best_stem_test('ماكتبش'))
+
+    def test_unin_conj_noun(self):
         self.assertEqual('كتاب', choose_best_stem_test('وكتاب'))
 
-    def test_unin_parse7(self):
+    def test_unin_prep_noun(self):
         self.assertEqual('كتاب', choose_best_stem_test('لكتاب'))
 
-    def test_unin_parse8(self):
+    def test_unin_conj_prep_noun(self):
         self.assertEqual('كتاب', choose_best_stem_test('ولكتاب'))

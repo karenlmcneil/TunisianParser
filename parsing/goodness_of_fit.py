@@ -163,9 +163,7 @@ def choose_best_parse(parse_dict, debug=False):
         if prefix and extract_prefix(parse)=='ال':   # automatically return noun if has def art
             if debug: print("Returning ", parse_dict[word_type], word_type)
             return parse_dict[word_type], word_type
-        # func = function_dict.get(word_type)
-        print("Word type is ", word_type)
-        print("VB in word type ", 'VB' in word_type)
+
         if 'UNINVBD' in word_type:
             func = make_alt_unin_verb_forms
         elif 'VB' in word_type:
@@ -181,6 +179,7 @@ def choose_best_parse(parse_dict, debug=False):
         else:
             func = None
         if debug: print("Function chosen is ", func)
+
         if func:
             stem, word_forms = func(parse)
             if debug: print("Stem, word_forms are ", stem, word_forms)
