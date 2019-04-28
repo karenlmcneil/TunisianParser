@@ -64,7 +64,7 @@ def calculate_segment_accuracy(gold_parse_list, test_parse_list):
         if test_parse==gold_parse:
             accuracy+=1
         else:
-            wrong_list.append(test_parse + " " + gold_parse)
+            wrong_list.append("Expected: " + gold_parse + "\tGot: " + test_parse)
 
         #turn parses into strings of zeros and ones showing boundries
         gold_strings = make_binary(gold_parse)
@@ -78,7 +78,7 @@ def calculate_segment_accuracy(gold_parse_list, test_parse_list):
             try:  # why am I getting an IndexError sometimes here?
                 if test_string == '1' and test_string == gold_strings[i]:
                     r_num += 1
-                if test_string == '1' and test_string == gold_strings[i]:
+                if test_string == '0' and test_string == gold_strings[i]:
                     p_num += 1
             except IndexError: continue
         recall_num += r_num
