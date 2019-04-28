@@ -19,8 +19,8 @@ class TestParser(TestCase):
     def test_multiword_string(self):
         string = 'هذه العربية وهذه الmixed!'
         p = parse(string)
-        expected_output = [('هذه', 'PART'), ('ال', 'DET'), ('عربية', 'N'), ('و', 'C'),
-            ('هذه', 'UNIN'), ('ال', 'DET'), ('mixed', 'N'), ('!', 'PUNCT')]
+        expected_output = [('هذه', 'DEM-PRO'), ('ال', 'DET'), ('عربية', 'N'), ('و', 'C'),
+            ('هذه', 'DEM-PRO'), ('ال', 'DET'), ('mixed', 'N'), ('!', 'PUNCT')]
         self.assertEqual(expected_output, p)
 
     def test_multiple_prefix(self):
@@ -59,16 +59,11 @@ class TestParser(TestCase):
         expected_output = [('و', 'C'), ('نمشيو', 'VBZ')]
         self.assertEqual(expected_output, p)
 
-    def test_fail(self):
-        # مشينا، عطيهولي، ما عطيهوليش
-        self.fail('Write tests for other verb types')
-
-    # def test_real_sentences(self):
-    #     string = 'ومن وقتاش رجعت تحكي معاه المدير؟'
-    #
-    #     p = parse(string)
-    #     print("parse is ", p)
-    #     expected_output = [('و', 'C'), ('من', 'P'), ('وقتاش', 'PART'), ('رجعت', 'VBD'),
-    #                        ('تحكي', 'VBZ'), ('معا', 'PART'), ('ه', 'PRO'), ('ال', 'DET'),
-    #                        ('مدير', 'N'), ('؟', 'PUNCT')]
-    #     self.assertEqual(expected_output, p)
+    def test_real_sentences(self):
+        string = 'ومن وقتاش رجعت تحكي معاه المدير؟'
+        p = parse(string)
+        print("parse is ", p)
+        expected_output = [('و', 'C'), ('من', 'P'), ('وقتاش', 'INTEROG'), ('رجعت', 'VBD'),
+                           ('تحكي', 'VBZ'), ('معا', 'PREP'), ('ه', 'PRO'), ('ال', 'DET'),
+                           ('مدير', 'N'), ('؟', 'PUNCT')]
+        self.assertEqual(expected_output, p)

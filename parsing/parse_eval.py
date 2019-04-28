@@ -50,11 +50,13 @@ def log_incorrect_parses(wrong_list):
     return
 
 
-def parse_eval(test_parse_list, gold_parse_list):
-    '''
-    Calculate precision and recall
-    Returns recall, precision, accuracy
-    '''
+def calculate_segment_accuracy(gold_parse_list, test_parse_list):
+    """
+    Calculates accuracy, precision and recall of word segmentation.
+    :param gold_parse_list: a list of correct segments, separated by spaces (['w al byt', 'altqy t'])
+    :param test_parse_list: a list of parser-produced segments (['w al byt', 'al tqyt'])
+    :return: 3 floats: accuracy, precision and recall
+    """
     recall_num, recall_denom, precision_num, precision_denom, accuracy = 0, 0, 0, 0, 0
     wrong_list = []
 
@@ -65,36 +67,50 @@ def parse_eval(test_parse_list, gold_parse_list):
             wrong_list.append(test_parse + " " + gold_parse)
 
         #turn parses into strings of zeros and ones showing boundries
-        gold_str = make_binary(gold_parse)
-        test_str = make_binary(test_parse)
+        gold_strings = make_binary(gold_parse)
+        test_strings = make_binary(test_parse)
 
         # compute precision and recall
-        recall_denom += len([l for l in gold_str if l=='1'])
-        precision_denom += len([l for l in gold_str if l=='0'])
+        recall_denom += len([l for l in gold_strings if l=='1'])
+        precision_denom += len([l for l in gold_strings if l=='0'])
         r_num, p_num, i = 0, 0, 0
-        while i < len(test_str):
-            if test_str[i]=='1' and test_str[i]==gold_str[i]:
-                r_num+=1
-            if test_str[i]=='0' and test_str[i]==gold_str[i]:
-                p_num+=1
-            i+=1
+        for i, test_string in enumerate(test_strings):
+            try:  # why am I getting an IndexError sometimes here?
+                if test_string == '1' and test_string == gold_strings[i]:
+                    r_num += 1
+                if test_string == '1' and test_string == gold_strings[i]:
+                    p_num += 1
+            except IndexError: continue
         recall_num += r_num
         precision_num += p_num
         if wrong_list:
             log_incorrect_parses(wrong_list)
-    return accuracy/len(test_parse_list), precision_num/precision_denom, \
-        recall_num/recall_denom
+        try:
+            recall = recall_num/recall_denom
+        except ZeroDivisionError:
+            recall = 0
+        try:
+            precision = precision_num/precision_denom
+        except ZeroDivisionError:
+            precision = 0
+        try:
+            acc = accuracy/len(test_parse_list)
+        except ZeroDivisionError:
+            acc = 0
+    return acc, precision, recall
 
 
-def evaluate_parser(data_length=2000):
-    gold_string = transString(open('data/arabic_testing.txt','r', encoding='utf-8').read())
-    gold_parses = gold_string.split()
-    test_tokens = gold_string.replace('+','').split()
-    test_parses = []
-    for word in test_tokens[:data_length]:
-        parsed_word = parse(word)[0][0]
-        test_parses.append(parsed_word.replace(' ', '+'))
-    accuracy, precision, recall = parse_eval(test_parses, gold_parses[:data_length])
+def evaluate_parser_segmentation(data_length=2000):
+    gold_parse_list = []
+    test_parse_list = []
+    gold_lines = open('data/segmentation_gold.txt','r', encoding='utf-8').readlines()
+    for line in gold_lines:
+        for gold_token in line.split():
+            gold_parse_list.append(gold_token)
+            joined_token = gold_token.replace('+', '')
+            test_token = '+'.join([w for w,t in parse(joined_token)])
+            test_parse_list.append(test_token)
+    accuracy, precision, recall = calculate_segment_accuracy(gold_parse_list, test_parse_list)
     return accuracy, precision, recall
 
 
@@ -122,3 +138,11 @@ def evaluate_parser_stem(data_length=2000):
     accuracy = correct/total_tokens
     log.close()
     return accuracy
+
+
+if __name__ == '__main__':
+    # seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation()
+    seg_acc = evaluate_parser_segmentation()
+    print("\nSegmentation accuracy is ", seg_acc)
+          # "\nSegmentation precision is ", seg_prec,
+          # "\nSegmentation recall is ", seg_rec)

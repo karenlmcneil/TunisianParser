@@ -15,6 +15,7 @@ pronouns = ['انت', 'انتي', 'انا', 'اني', 'هو', 'هي', 'هوّ', 
 
 emphatics = ['ها', 'را']
 
+
 # Noun Clitics
 
 def_art = ["ال"]
@@ -63,6 +64,12 @@ NEG_VBD_CLIT = Or([oneOf(post_neg), VBD_CLIT + oneOf(post_neg)])
 ##############
 # Word Types #
 ##############
+
+# Particles
+
+# انني --> ان + ني
+PART_PRO = Literal('ان') + oneOf(dir_obj_suffixes)
+PART_PRO.setName('PART_PRO')
 
 # Nouns
 
@@ -256,11 +263,12 @@ neg_verbs = [NEG_VBD_NEG, NEG_VBD_PRO_NEG, NEG_VBD_P_PRO_NEG, NEG_VBD_PRO_P_PRO_
                  VBZ_NEG,     VBZ_PRO_NEG,     VBZ_P_PRO_NEG,     VBZ_PRO_P_PRO_NEG,]
 nouns = [N_PRO, P_N_PRO, DET_N, P_DET_N]
 prons = [P_PRO]
+parts = [PART_PRO]
 unin = [UNIN, P_UNIN,
         UNINVBD_PRO, UNINVBD_P_PRO, UNINVBD_PRO_P_PRO,
         UNINVBD_NEG, UNINVBD_PRO_NEG, UNINVBD_P_PRO_NEG, UNINVBD_PRO_P_PRO_NEG,
         NEG_UNINVBD_NEG, NEG_UNINVBD_PRO_NEG, NEG_UNINVBD_P_PRO_NEG, NEG_UNINVBD_PRO_P_PRO_NEG]
 
-word_types = verbs + neg_verbs + nouns + prons + unin
+word_types = verbs + neg_verbs + nouns + prons + parts + unin
 
 
