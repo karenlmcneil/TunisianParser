@@ -88,7 +88,8 @@ def parse(string):
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--string", type=str,
+    argparser.add_argument("--string", type=str, default="ماكلمتهاش",
                            help="string to parse")
     args = argparser.parse_args()
-    parse(args.string)
+    parse_list = parse(args.string)
+    print(parse_list)

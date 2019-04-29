@@ -1,6 +1,6 @@
 import nltk
 
-from preprocessing.uni2buck import transString
+# from preprocessing.uni2buck import transString
 from parser import parse
 
 
@@ -17,12 +17,12 @@ from parser import parse
 
 
 def make_binary(parse):
-    '''
+    """
     turn parse into string of zeros and ones showing boundaries
-    ie: 'w+al+byt'  ->  '10100'
-    arg is a string of morphemes separated by '+'
-    returns a string of zeros and ones
-    '''
+    for example: 'w+al+byt'  ->  '10100'
+    :param parse: a string of morphemes separated by '+'
+    :return: string of zeros and ones
+    """
     string = ''
     i=0
     while i < len(parse)-1:
@@ -64,7 +64,7 @@ def calculate_segment_accuracy(gold_parse_list, test_parse_list):
         if test_parse==gold_parse:
             accuracy+=1
         else:
-            wrong_list.append("Expected: " + gold_parse + "\tGot: " + test_parse)
+            wrong_list.append(test_parse + " " + gold_parse)
 
         #turn parses into strings of zeros and ones showing boundries
         gold_strings = make_binary(gold_parse)
@@ -78,7 +78,7 @@ def calculate_segment_accuracy(gold_parse_list, test_parse_list):
             try:  # why am I getting an IndexError sometimes here?
                 if test_string == '1' and test_string == gold_strings[i]:
                     r_num += 1
-                if test_string == '0' and test_string == gold_strings[i]:
+                if test_string == '1' and test_string == gold_strings[i]:
                     p_num += 1
             except IndexError: continue
         recall_num += r_num
@@ -114,6 +114,14 @@ def evaluate_parser_segmentation(data_length=2000):
     return accuracy, precision, recall
 
 
+def evaluate_pos_tagging(infile):
+    with open(infile, 'r') as inf:
+        for l in inf:
+            pass
+    accuracy = 0
+    return accuracy
+
+
 def evaluate_parser_stem(data_length=2000):
     gl = open('data/arabic_stem_testing.txt', 'r', encoding='utf-8').readlines()
     tl = open('data/arabic_test_string.txt', 'r', encoding='utf-8').readlines()
@@ -142,7 +150,7 @@ def evaluate_parser_stem(data_length=2000):
 
 if __name__ == '__main__':
     # seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation()
-    seg_acc = evaluate_parser_segmentation()
-    print("\nSegmentation accuracy is ", seg_acc)
-          # "\nSegmentation precision is ", seg_prec,
-          # "\nSegmentation recall is ", seg_rec)
+    seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation()
+    print("\nWord-level segmentation accuracy is {:2.2%}".format(seg_acc),
+          "\nCharacter-level segmentation precision is {:2.2%}".format(seg_prec),
+          "\nCharacter-level segmentation recall is {:2.2%}".format(seg_rec))
