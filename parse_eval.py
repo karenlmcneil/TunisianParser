@@ -1,7 +1,7 @@
 import nltk
 
 # from preprocessing.uni2buck import transString
-from parser import parse
+from aeb_parser import parse
 
 
 # #**********************************************#
@@ -78,7 +78,7 @@ def calculate_segment_accuracy(gold_parse_list, test_parse_list):
             try:  # why am I getting an IndexError sometimes here?
                 if test_string == '1' and test_string == gold_strings[i]:
                     r_num += 1
-                if test_string == '1' and test_string == gold_strings[i]:
+                if test_string == '0' and test_string == gold_strings[i]:
                     p_num += 1
             except IndexError: continue
         recall_num += r_num
@@ -100,10 +100,16 @@ def calculate_segment_accuracy(gold_parse_list, test_parse_list):
     return acc, precision, recall
 
 
-def evaluate_parser_segmentation(data_length=2000):
+def evaluate_parser_segmentation(filename='data/segmentation_gold.txt'):
+    """
+    Evaluates results of word segmentation.
+    :param filename: A txt file with arabic text with morphologic boundaries marked with '+'
+    :return: Three floats, for accuracy, precision and recall. Accuracy is word-level; precision
+    and recall are character level.
+    """
     gold_parse_list = []
     test_parse_list = []
-    gold_lines = open('data/segmentation_gold.txt','r', encoding='utf-8').readlines()
+    gold_lines = open(filename,'r', encoding='utf-8').readlines()
     for line in gold_lines:
         for gold_token in line.split():
             gold_parse_list.append(gold_token)
@@ -114,12 +120,26 @@ def evaluate_parser_segmentation(data_length=2000):
     return accuracy, precision, recall
 
 
-def evaluate_pos_tagging(infile):
-    with open(infile, 'r') as inf:
-        for l in inf:
-            pass
-    accuracy = 0
-    return accuracy
+def evaluate_pos_tagging(goldfile, testfile):
+    """
+    Evaluates the results of part of speech tagging. Word segmentation in test file and gold
+    standard file must be the same.
+    :param goldfile: A tsv file of the format "word \t tag \n" with the correct pos
+    :param testfile: A tsv file of the format "word \t tag \n" with the pos produced by parser
+    :return:
+    """
+    acc = 0
+    acc_denom = 0
+    with open(goldfile, 'r') as gf, open(testfile, 'r') as tf:
+        goldlines = gf.readlines()
+        testlines = tf.readlines()
+        for i, line in enumerate(goldlines):
+            acc_denom += 1
+            gold_word, gold_tag = line.strip().split('\t')
+            test_word, test_tag = testlines[i].strip().split('\t')
+            if test_tag == gold_tag:
+                acc += 1
+    return acc / acc_denom
 
 
 def evaluate_parser_stem(data_length=2000):
@@ -154,3 +174,4 @@ if __name__ == '__main__':
     print("\nWord-level segmentation accuracy is {:2.2%}".format(seg_acc),
           "\nCharacter-level segmentation precision is {:2.2%}".format(seg_prec),
           "\nCharacter-level segmentation recall is {:2.2%}".format(seg_rec))
+    # pos_acc = evaluate_pos_tagging(goldfile, testfile)

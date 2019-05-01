@@ -1,7 +1,7 @@
 import timeit
 from unittest import TestCase
 
-from parser import parse
+from aeb_parser import parse
 
 
 class ParseTimingTest(TestCase):

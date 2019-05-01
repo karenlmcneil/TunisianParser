@@ -1,5 +1,5 @@
 from unittest import TestCase
-from parser import parse
+from aeb_parser import parse
 
 
 class TestParser(TestCase):

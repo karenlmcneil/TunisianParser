@@ -154,7 +154,6 @@ def make_alt_unin_forms(parse):
     return stem, set(word_forms)
 
 
-
 def choose_best_parse(parse_dict, debug=False):
     freq_dict = {}
     for word_type, parse in parse_dict.items():
@@ -189,7 +188,7 @@ def choose_best_parse(parse_dict, debug=False):
     try:
         chosen_word_type = max(freq_dict, key=freq_dict.get)
         if debug: print("Chosen word type is ", chosen_word_type)
-    except TypeError: #if all are 0
+    except TypeError: # if all are 0
         if debug: print("All freq zero, choosing UNIN")
         chosen_word_type = 'UNIN'
     if debug: print("Returning ", parse_dict[chosen_word_type], chosen_word_type)

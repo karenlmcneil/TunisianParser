@@ -80,6 +80,8 @@ def parse(string):
             continue
         parse_dict = stemmer(word)
         parse, pos = choose_best_parse(parse_dict)
+        pos = re.sub('UNINVBD', 'VBD', pos)
+        pos = re.sub('UNIN', 'N', pos)  # default to noun for uninflected unknown words
         pos_list = pos.split('_')
         mapped = list(zip(parse, pos_list))
         parsed_list.extend(mapped)

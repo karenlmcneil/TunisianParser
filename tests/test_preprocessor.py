@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from preprocessing.ar_ctype import normalize
 from preprocessing import preprocessor
-from parser import parse, preprocess
+from aeb_parser import parse, preprocess
 
 
 
