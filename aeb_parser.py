@@ -32,6 +32,7 @@ interog = ['قداش', 'كيفاش', 'وقتاش', 'اشنو', 'علاه', 'عل
 prep = ['الى', 'من', 'في', 'على', 'كي', 'كيفما', 'كيف', 'ع', 'م', 'نحو']
 noun = ['الله']
 conj = ['و']
+neg = ['موش' , 'مش']
 
 
 def load_saved_parses():
@@ -56,6 +57,8 @@ def load_saved_parses():
         saved_parses[nn] = (nn, 'N')
     for c in conj:
         saved_parses[c] = (c, 'C')
+    for n in neg:
+        saved_parses[n] = (n, 'NEG')
     return saved_parses
 
 
@@ -79,7 +82,7 @@ def parse(string):
             parsed_list.append((word, 'FW'))
             continue
         parse_dict = stemmer(word)
-        parse, pos = choose_best_parse(parse_dict)
+        parse, pos = choose_best_parse(parse_dict, debug=False)
         pos = re.sub('UNINVBD', 'VBD', pos)
         pos = re.sub('UNIN', 'N', pos)  # default to noun for uninflected unknown words
         pos_list = pos.split('_')

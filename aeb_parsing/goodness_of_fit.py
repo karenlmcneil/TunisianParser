@@ -4,11 +4,10 @@ import os
 from aeb_parsing.pyparsing_grammar import vbz_suff_inflec, \
         poss_suffixes, def_art, def_art_short
 from aeb_parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
-    key_vbd_suffixes as vbd_suffixes, dir_obj_suffixes, pronouns
+    key_vbd_suffixes as vbd_suffixes, ind_obj_suffixes, pronouns
 from aeb_parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
 corpus_text_location = 'data/corpus_clean.txt'
-print("current directory is ", os.getcwd())
 corpus_text = open(corpus_text_location, 'r').read()
 fd = nltk.FreqDist(corpus_text.split())
 
@@ -64,20 +63,29 @@ def make_alt_noun_forms(parse):
 
 
 def make_alt_affixed_pron_forms(parse):
+    """P_PRO or C_P_PRO
+    prepositions = ['ل','ب', 'في', 'علي', 'من']
+    ind_obj_suffixes = ["ي", "نا", "ن", "كم", "و", "ه", "هو", "ها", "هم"]
+    P_PRO = oneOf(prepositions)("stem") + oneOf(ind_obj_suffixes)("suffix") + \
+    FollowedBy(endOfString)
+    """
     word_forms = []
-    stem = extract_stem(parse)
-    prefix = extract_prefix(parse)
+    prep = extract_stem(parse)
     suffix = extract_suffix(parse)
-    if stem:
-        for do in [o for o in dir_obj_suffixes if o != stem]:
-            if prefix and suffix:
-                word_forms.append(prefix + do + suffix)
-            if prefix and not suffix:
-                word_forms.append(prefix + do)
-    return stem, set(word_forms)
+    if prep:
+        for ind_pro in [suff for suff in ind_obj_suffixes if suff != suffix]:
+            if ind_pro:
+                word_forms.append(prep + ind_pro)
+    return prep, set(word_forms)
 
 
 def make_alt_ind_pron_forms(parse):
+    '''
+    'PRO' or 'C_PRO'
+    pronouns = ['انت', 'انتي', 'انا', 'اني', 'هو', 'هي', 'هوّ', 'هيّ'
+             'احنا', 'انتم', 'انتوما', 'هم', 'هما', 'هوم', 'هوما']
+    PRO = oneOf(pronouns)("stem")
+    '''
     word_forms = []
     stem = extract_stem(parse)
     prefix = extract_prefix(parse)
@@ -157,12 +165,13 @@ def choose_best_parse(parse_dict, debug=False):
     freq_dict = {}
     for word_type, parse in parse_dict.items():
         stem = extract_stem(parse)
-        if not stem or len(stem) < 2:
+        short_stems = ['C', 'PART_PRO', 'PRO', 'P_PRO', 'P', 'C_PART_PRO', 'C_PRO', 'C_P_PRO', 'C_P']
+        if not stem:
+            continue
+        if len(stem) < 2 and word_type not in short_stems:
             continue
         prefix = extract_prefix(parse)
-        if debug: print("Prefix is ", prefix)
         if prefix and extract_prefix(parse)=='ال':   # automatically return noun if has def art
-            if debug: print("Returning ", parse_dict[word_type], word_type)
             return parse_dict[word_type], word_type
 
         if 'UNINVBD' in word_type:
@@ -173,27 +182,21 @@ def choose_best_parse(parse_dict, debug=False):
             func = make_alt_unin_forms
         elif 'N' in word_type:
             func = make_alt_noun_forms
-        elif 'P_PRO' or 'C_PRO' or 'C_P_PRO' in word_type:
-            func = make_alt_ind_pron_forms
-        elif 'PRO' in word_type:
+        elif 'P_PRO' in word_type:
             func = make_alt_affixed_pron_forms
+        elif 'PRO' or 'C_PRO' in word_type:
+            func = make_alt_ind_pron_forms
         else:
             func = None
-        if debug: print("Function chosen is ", func)
 
         if func:
             stem, word_forms = func(parse)
-            if debug: print("Stem, word_forms are ", stem, word_forms)
             ave_freq = compute_ave_freq(word_forms)
-            if debug: print("Ave freq is ", ave_freq)
             freq_dict[word_type] = ave_freq
     try:
         chosen_word_type = max(freq_dict, key=freq_dict.get)
-        if debug: print("Chosen word type is ", chosen_word_type)
     except: # if all are 0
-        if debug: print("All freq zero, choosing UNIN")
         chosen_word_type = 'UNIN'
-    if debug: print("Returning ", parse_dict[chosen_word_type], chosen_word_type)
     return parse_dict[chosen_word_type], chosen_word_type
 
 

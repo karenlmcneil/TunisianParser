@@ -11,8 +11,8 @@ conjunctions = ['و']
 # affixed_prepositions = ['ل', 'ب', 'م']
 prepositions = ['ل','ب', 'في', 'علي', 'من']
 
-pronouns = ['انت', 'انتي', 'انا', 'اني', 'هو', 'هي', 'هوّ', 'هيّ'
-             'احنا', 'انتم', 'انتوما', 'هم', 'هما', 'هوم', 'هوما']
+pronouns = ['انت', 'انتي', 'انا', 'اني', 'هو', 'هي', 'احنا', 'انتم', 'انتوما',
+            'هم', 'هما', 'هوم', 'هوما']
 
 emphatics = ['ها', 'را']
 
@@ -33,7 +33,7 @@ vbz_suff_inflec = ['وا', 'و']
 vbd_suff_inflec = ["ت", "نا", "توا", "و", "وا"]
 key_vbd_suffixes = ["ت", "نا", "و", "وا"]
 dir_obj_suffixes = ["ني", "نا", "ك", "كم", "و", "ه", "هو", "ها", "هم"]
-ind_obj_suffixes = ["ي", "نا", "ن", "كم", "و", "ه", "هو", "ها", "هم"]
+ind_obj_suffixes = ["ي", "نا", "كم", "و", "ه", "هو", "ها", "هم", "ك"]
 pre_neg = ['م', 'ما']
 post_neg = ['ش', 'شي']
 
@@ -69,6 +69,9 @@ NEG_VBD_CLIT = Or([oneOf(post_neg), VBD_CLIT + oneOf(post_neg)])
 C = oneOf(conjunctions)("stem")
 C.setName('C')
 
+P = oneOf(prepositions)("stem")
+P.setName('P')
+
 # Particles
 
 # انني --> ان + ني
@@ -96,10 +99,13 @@ P_DET_N.setName('P_DET_N')
 
 # Pronouns
 
-PRO = oneOf(pronouns)("stem")
+PRO = oneOf(pronouns).setName("stem")
 PRO.setName('PRO')
 
-P_PRO = oneOf(prepositions)("stem") + oneOf(ind_obj_suffixes) + \
+ind = oneOf(ind_obj_suffixes)
+prep = oneOf(prepositions)
+
+P_PRO = prep("stem") + ind("suffix") + \
     FollowedBy(endOfString)
 P_PRO.setName('P_PRO')
 
@@ -267,8 +273,8 @@ neg_verbs = [NEG_VBD_NEG, NEG_VBD_PRO_NEG, NEG_VBD_P_PRO_NEG, NEG_VBD_PRO_P_PRO_
                  VBZ_NEG,     VBZ_PRO_NEG,     VBZ_P_PRO_NEG,     VBZ_PRO_P_PRO_NEG,]
 nouns = [N_PRO, P_N_PRO, DET_N, P_DET_N]
 conj = [C]
-prons = [P_PRO]
-parts = [PART_PRO]
+prons = [PRO, P_PRO]
+parts = [P, PART_PRO]
 unin = [UNIN, P_UNIN,
         UNINVBD_PRO, UNINVBD_P_PRO, UNINVBD_PRO_P_PRO,
         UNINVBD_NEG, UNINVBD_PRO_NEG, UNINVBD_P_PRO_NEG, UNINVBD_PRO_P_PRO_NEG,
