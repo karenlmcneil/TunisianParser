@@ -5,7 +5,6 @@ from aeb_parsing.pyparsing_grammar import vbz_suff_inflec, \
         poss_suffixes, def_art, def_art_short
 from aeb_parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
     key_vbd_suffixes as vbd_suffixes, dir_obj_suffixes, pronouns
-
 from aeb_parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
 corpus_text_location = 'data/corpus_clean.txt'
@@ -157,6 +156,9 @@ def make_alt_unin_forms(parse):
 def choose_best_parse(parse_dict, debug=False):
     freq_dict = {}
     for word_type, parse in parse_dict.items():
+        stem = extract_stem(parse)
+        if not stem or len(stem) < 2:
+            continue
         prefix = extract_prefix(parse)
         if debug: print("Prefix is ", prefix)
         if prefix and extract_prefix(parse)=='ال':   # automatically return noun if has def art
@@ -188,7 +190,7 @@ def choose_best_parse(parse_dict, debug=False):
     try:
         chosen_word_type = max(freq_dict, key=freq_dict.get)
         if debug: print("Chosen word type is ", chosen_word_type)
-    except TypeError: # if all are 0
+    except: # if all are 0
         if debug: print("All freq zero, choosing UNIN")
         chosen_word_type = 'UNIN'
     if debug: print("Returning ", parse_dict[chosen_word_type], chosen_word_type)

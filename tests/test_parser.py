@@ -17,10 +17,10 @@ class TestParser(TestCase):
         self.assertEqual(expected_output, p)
 
     def test_multiword_string(self):
-        string = 'هذه العربية وهذه الmixed!'
+        string = 'هذه العربية و هذه الmixed!'
         p = parse(string)
-        expected_output = [('هذه', 'DEM-PRO'), ('ال', 'DET'), ('عربية', 'N'), ('و', 'C'),
-            ('هذه', 'DEM-PRO'), ('ال', 'DET'), ('mixed', 'N'), ('!', 'PUNCT')]
+        expected_output = [('هذه', 'DEM'), ('ال', 'DET'), ('عربية', 'N'), ('و', 'C'),
+            ('هذه', 'DEM'), ('ال', 'DET'), ('mixed', 'N'), ('!', 'PUNCT')]
         self.assertEqual(expected_output, p)
 
     def test_multiple_prefix(self):

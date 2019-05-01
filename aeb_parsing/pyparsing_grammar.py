@@ -7,6 +7,7 @@ from pyparsing import StringEnd, oneOf, Optional, Or, Literal, SkipTo, FollowedB
 endOfString = StringEnd()
 
 conjunctions = ['و']
+
 # affixed_prepositions = ['ل', 'ب', 'م']
 prepositions = ['ل','ب', 'في', 'علي', 'من']
 
@@ -55,7 +56,7 @@ NEG_VBD_CLIT = Or([oneOf(post_neg), VBD_CLIT + oneOf(post_neg)])
 # Alternate way to make verb stems
     # from pyparsing import srange, Word
     # arabicChars = srange(r"[\0x0621-\0x0652,\0x067E,\0x06A4,\0x06A8]")
-    # verbStem = Word(arabicChars, exact=3).setName('stem')
+    # verbStem = Word(arabicChars, minimum=2).setName('stem')
     # vbz_pre = oneOf(['ان', 'ن', 'ت', 'ي']).setName('pre')
     # vbz_suff = oneOf(['وا', 'و']).setName('suff')
     # vbz = (vbz_pre + verbStem + vbz_suff).setName('vbz')
@@ -65,20 +66,23 @@ NEG_VBD_CLIT = Or([oneOf(post_neg), VBD_CLIT + oneOf(post_neg)])
 # Word Types #
 ##############
 
+C = oneOf(conjunctions)("stem")
+C.setName('C')
+
 # Particles
 
 # انني --> ان + ني
-PART_PRO = Literal('ان') + oneOf(dir_obj_suffixes)
+PART_PRO = Literal('ان')("stem") + oneOf(dir_obj_suffixes)
 PART_PRO.setName('PART_PRO')
 
 # Nouns
 
 # كتابها --> كتاب + ها
-N_PRO = SkipTo(N_SUFF | endOfString)("stem") + N_SUFF("suffix")
+N_PRO = SkipTo(N_SUFF)("stem") + N_SUFF("suffix")
 N_PRO.setName('N_PRO')
 
 # لكتابها --> ل + كتاب + ها
-P_N_PRO = oneOf(prepositions) ("prefix") + SkipTo(N_SUFF | endOfString)("stem") + N_SUFF("suffix")
+P_N_PRO = oneOf(prepositions)("prefix") + SkipTo(N_SUFF)("stem") + N_SUFF("suffix")
 P_N_PRO.setName('P_N_PRO')
 
 # الكتاب --> ال + كتاب
@@ -86,16 +90,16 @@ DET_N =  oneOf(def_art)("prefix") + SkipTo(endOfString)("stem")
 DET_N.setName('DET_N')
 
 # بالكتاب --> ب + ال + كتاب
-P_DET_N = ( oneOf(prepositions) + ( oneOf(def_art) | oneOf(def_art_short) ) )("prefix") + SkipTo(endOfString)("stem")
+P_DET_N = (oneOf(prepositions) + (oneOf(def_art) | oneOf(def_art_short)))("prefix") + SkipTo(endOfString)("stem")
 P_DET_N.setName('P_DET_N')
 
 
 # Pronouns
 
-PRO = oneOf(pronouns)
+PRO = oneOf(pronouns)("stem")
 PRO.setName('PRO')
 
-P_PRO = oneOf(prepositions)('prefix') + oneOf(ind_obj_suffixes)("stem") + \
+P_PRO = oneOf(prepositions)("stem") + oneOf(ind_obj_suffixes) + \
     FollowedBy(endOfString)
 P_PRO.setName('P_PRO')
 
@@ -207,7 +211,7 @@ NEG_VBD_PRO_P_PRO_NEG.setName('NEG_VBD_PRO_P_PRO_NEG')
 UNIN = SkipTo(endOfString)("stem")
 UNIN.setName("UNIN")
 
-P_UNIN = ( oneOf(prepositions) )("prefix") + SkipTo(endOfString)("stem")
+P_UNIN = (oneOf(prepositions))("prefix") + SkipTo(endOfString)("stem")
 P_UNIN.setName("P_UNIN")
 
 # uninflected vbd #
@@ -262,6 +266,7 @@ neg_verbs = [NEG_VBD_NEG, NEG_VBD_PRO_NEG, NEG_VBD_P_PRO_NEG, NEG_VBD_PRO_P_PRO_
              NEG_VBZ_NEG, NEG_VBZ_PRO_NEG, NEG_VBZ_P_PRO_NEG, NEG_VBZ_PRO_P_PRO_NEG,
                  VBZ_NEG,     VBZ_PRO_NEG,     VBZ_P_PRO_NEG,     VBZ_PRO_P_PRO_NEG,]
 nouns = [N_PRO, P_N_PRO, DET_N, P_DET_N]
+conj = [C]
 prons = [P_PRO]
 parts = [PART_PRO]
 unin = [UNIN, P_UNIN,
@@ -269,6 +274,6 @@ unin = [UNIN, P_UNIN,
         UNINVBD_NEG, UNINVBD_PRO_NEG, UNINVBD_P_PRO_NEG, UNINVBD_PRO_P_PRO_NEG,
         NEG_UNINVBD_NEG, NEG_UNINVBD_PRO_NEG, NEG_UNINVBD_P_PRO_NEG, NEG_UNINVBD_PRO_P_PRO_NEG]
 
-word_types = verbs + neg_verbs + nouns + prons + parts + unin
+word_types = conj + verbs + neg_verbs + nouns + prons + parts + unin
 
 

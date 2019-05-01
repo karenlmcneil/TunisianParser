@@ -29,8 +29,9 @@ emph_pron = ['راهو', 'راني', 'راهي', 'راك', 'رانا', 'راهم
 rel_pron = ['اللي', 'الي']
 dem_pron = ['هذه', 'هاذي', 'هذايا']
 interog = ['قداش', 'كيفاش', 'وقتاش', 'اشنو', 'علاه', 'علاش', 'اشني', 'اشنوه', 'اشنيه']
-prep = ['الى', 'من', 'في', 'على', 'كي', 'كيفما', 'كيف', 'ع', 'م']
+prep = ['الى', 'من', 'في', 'على', 'كي', 'كيفما', 'كيف', 'ع', 'م', 'نحو']
 noun = ['الله']
+conj = ['و']
 
 
 def load_saved_parses():
@@ -40,25 +41,27 @@ def load_saved_parses():
     for pro in pronouns:
         saved_parses[pro] = (pro, 'PRO')
     for np in neg_pron:
-        saved_parses[np] = (np, 'NEG-COP')
+        saved_parses[np] = (np, 'NEGCOP')
     for ep in emph_pron:
-        saved_parses[ep] = (ep, 'EMPH-PRO')
+        saved_parses[ep] = (ep, 'EMPH')
     for rp in rel_pron:
-        saved_parses[rp] = (rp, 'REL-PRO')
+        saved_parses[rp] = (rp, 'REL')
     for dp in dem_pron:
-        saved_parses[dp] = (dp, 'DEM-PRO')
+        saved_parses[dp] = (dp, 'DEM')
     for intr in interog:
         saved_parses[intr] = (intr, 'INTEROG')
     for prepos in prep:
         saved_parses[prepos] = (prepos, 'P')
     for nn in noun:
         saved_parses[nn] = (nn, 'N')
+    for c in conj:
+        saved_parses[c] = (c, 'C')
     return saved_parses
 
 
 def parse(string):
     """
-    Morphologically segments, POS taggs, and lemmatizes string of Tunisian Arabic text.
+    Morphologically segments and POS tags string of Tunisian Arabic text.
     :param string: Tunisian Arabic text
     :return: list: parses in the format ('word', 'POS')
     """
@@ -74,9 +77,6 @@ def parse(string):
             continue
         if test_lang(word) != 'AR':
             parsed_list.append((word, 'FW'))
-            continue
-        if word in saved_parses:
-            parsed_list.append(saved_parses[word])
             continue
         parse_dict = stemmer(word)
         parse, pos = choose_best_parse(parse_dict)
