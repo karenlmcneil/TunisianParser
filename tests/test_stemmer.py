@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from preprocessing import uni2buck
-from parsing.stemmer import stemmer, extract_stem, extract_suffix
+from aeb_parsing.stemmer import stemmer, extract_stem, extract_suffix
 
 
 class StemmerTest(TestCase):

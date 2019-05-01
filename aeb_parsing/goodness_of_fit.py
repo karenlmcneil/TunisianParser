@@ -1,12 +1,12 @@
 import nltk
 import os
 
-from parsing.pyparsing_grammar import vbz_suff_inflec, \
+from aeb_parsing.pyparsing_grammar import vbz_suff_inflec, \
         poss_suffixes, def_art, def_art_short
-from parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
+from aeb_parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
     key_vbd_suffixes as vbd_suffixes, dir_obj_suffixes, pronouns
 
-from parsing.stemmer import extract_stem, extract_suffix, extract_prefix
+from aeb_parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
 corpus_text_location = 'data/corpus_clean.txt'
 print("current directory is ", os.getcwd())

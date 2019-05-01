@@ -6,8 +6,8 @@ import re
 from preprocessing import uni2buck
 from preprocessing.preprocessor import space_mixed_words, test_lang
 from preprocessing.ar_ctype import normalize
-from parsing.stemmer import stemmer
-from parsing.goodness_of_fit import choose_best_parse
+from aeb_parsing.stemmer import stemmer
+from aeb_parsing.goodness_of_fit import choose_best_parse
 
 
 def preprocess(string):
