@@ -1,5 +1,5 @@
 import argparse
-import nltk
+import csv
 import re
 
 from preprocessing.preprocessor import space_mixed_words, test_lang, preprocess
@@ -49,11 +49,11 @@ def load_saved_parses():
     return saved_parses
 
 
-def parse(string):
+def parse_string(string):
     """
     Morphologically segments and POS tags string of Tunisian Arabic text.
     :param string: Tunisian Arabic text
-    :return: list: parses in the format ('word', 'POS')
+    :return: list of parse tuples in the format ('word', 'POS')
     """
     saved_parses = load_saved_parses()
     tokens = preprocess(string)
@@ -78,10 +78,21 @@ def parse(string):
     return parsed_list
 
 
+def parse_file(filename):
+    name, ext = filename.split('.')
+    new_filename = name + '_parsed' + '.tsv'
+    with open(filename, 'r') as infile, open(new_filename, 'w') as tsvfile:
+        writer = csv.writer(tsvfile, delimiter='\t', lineterminator='\n')
+        for line in infile:
+            for w, pos in parse_string(line):
+                writer.writerow([w, pos])
+    return
+
+
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--string", type=str, default="ماكلمتهاش",
                            help="string to parse")
     args = argparser.parse_args()
-    parse_list = parse(args.string)
+    parse_list = parse_string(args.string)
     print(parse_list)

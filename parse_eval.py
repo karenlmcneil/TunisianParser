@@ -1,7 +1,7 @@
 import nltk
 
 # from preprocessing.uni2buck import transString
-from aeb_parser import parse
+from aeb_parser import parse_string
 
 
 # #**********************************************#
@@ -114,7 +114,7 @@ def evaluate_parser_segmentation(filename='data/segmentation_gold.txt'):
         for gold_token in line.split():
             gold_parse_list.append(gold_token)
             joined_token = gold_token.replace('+', '')
-            test_token = '+'.join([w for w,t in parse(joined_token)])
+            test_token = '+'.join([w for w,t in parse_string(joined_token)])
             test_parse_list.append(test_token)
     accuracy, precision, recall = calculate_segment_accuracy(gold_parse_list, test_parse_list)
     return accuracy, precision, recall
@@ -154,7 +154,7 @@ def evaluate_parser_stem(data_length=2000):
     for i, line in enumerate(gl):
         for j, word in enumerate(line.split()):
             test_word = tl[i].split()[j]
-            parsed_word = parse(test_word)[0][0]
+            parsed_word = parse_string(test_word)[0][0]
             parse_pairs.append([word, parsed_word])
     for correct_parse, test_parse in parse_pairs:
         log.write("%s \t %s - " % (correct_parse, test_parse))
