@@ -1,23 +1,10 @@
-# from pyparsing import parseString
 import argparse
 import nltk
 import re
 
-from preprocessing import uni2buck
-from preprocessing.preprocessor import space_mixed_words, test_lang
-from preprocessing.ar_ctype import normalize
+from preprocessing.preprocessor import space_mixed_words, test_lang, preprocess
 from aeb_parsing.stemmer import stemmer
 from aeb_parsing.goodness_of_fit import choose_best_parse
-
-
-def preprocess(string):
-#     norm_string = ''
-#     for word in string.split(' '):
-#         norm_string += "%s " % space_mixed_words(punct_spacer(normalize(word)))  # TODO: Replace this with own
-#         norm_string = re.sub(' +', ' ', norm_string)
-#     norm_string = norm_string.strip()
-#     return norm_string
-    pass
 
 
 particles = ['باش', 'لو', 'فماش', 'فما', 'ثم', 'ثماش', 'غادي', 'بعد', 'لكن',
@@ -69,7 +56,7 @@ def parse(string):
     :return: list: parses in the format ('word', 'POS')
     """
     saved_parses = load_saved_parses()
-    tokens = nltk.tokenize.wordpunct_tokenize(string)  # TODO: Need to add preprocessing
+    tokens = preprocess(string)
     parsed_list = []
     for word in tokens:
         if word in saved_parses.keys():

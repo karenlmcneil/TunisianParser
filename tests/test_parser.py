@@ -63,7 +63,7 @@ class TestParser(TestCase):
         string = 'ومن وقتاش رجعت تحكي معاه المدير؟'
         p = parse(string)
         print("parse is ", p)
-        expected_output = [('و', 'C'), ('من', 'P'), ('وقتاش', 'INTEROG'), ('رجعت', 'VBD'),
-                           ('تحكي', 'VBZ'), ('معا', 'PREP'), ('ه', 'PRO'), ('ال', 'DET'),
+        expected_output = [('و', 'C'), ('من', 'N'), ('وقتاش', 'INTEROG'), ('رجعت', 'VBD'),
+                           ('تحكي', 'VBZ'), ('معا', 'N'), ('ه', 'PRO'), ('ال', 'DET'),
                            ('مدير', 'N'), ('؟', 'PUNCT')]
         self.assertEqual(expected_output, p)
