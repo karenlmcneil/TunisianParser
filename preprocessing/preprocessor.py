@@ -1,3 +1,4 @@
+import html
 import re
 import nltk
 from preprocessing.ar_ctype import normalize
@@ -37,6 +38,7 @@ def preprocess(string):
     :return: list of sentences, each of which is a list of normalized tokens
     """
     string = string.strip()
+    string = html.escape(string)
     string = space_mixed_words(string)
     string = normalize(string)
     tokens = nltk.tokenize.wordpunct_tokenize(string)
