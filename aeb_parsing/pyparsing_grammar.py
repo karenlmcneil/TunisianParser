@@ -16,6 +16,8 @@ pronouns = ['انت', 'انتي', 'انا', 'اني', 'هو', 'هي', 'احنا'
 
 emphatics = ['ها', 'را']
 
+genitive = ['متاع', 'متع']
+
 
 # Noun Clitics
 
@@ -69,10 +71,15 @@ NEG_VBD_CLIT = Or([oneOf(post_neg), VBD_CLIT + oneOf(post_neg)])
 C = oneOf(conjunctions)("stem")
 C.setName('C')
 
-P = oneOf(prepositions)("stem")
-P.setName('P')
+PREP = oneOf(prepositions)("stem")
+PREP.setName('PREP')
 
 # Particles
+
+GEN = oneOf(genitive)("stem")
+
+GEN_PRO = oneOf(genitive)("stem") + oneOf(poss_suffixes)
+GEN_PRO.setName('GEN_PRO')
 
 # انني --> ان + ني
 PART_PRO = Literal('ان')("stem") + oneOf(dir_obj_suffixes)
@@ -85,16 +92,16 @@ N_PRO = SkipTo(N_SUFF)("stem") + N_SUFF("suffix")
 N_PRO.setName('N_PRO')
 
 # لكتابها --> ل + كتاب + ها
-P_N_PRO = oneOf(prepositions)("prefix") + SkipTo(N_SUFF)("stem") + N_SUFF("suffix")
-P_N_PRO.setName('P_N_PRO')
+PREP_N_PRO = oneOf(prepositions)("prefix") + SkipTo(N_SUFF)("stem") + N_SUFF("suffix")
+PREP_N_PRO.setName('PREP_N_PRO')
 
 # الكتاب --> ال + كتاب
 DET_N =  oneOf(def_art)("prefix") + SkipTo(endOfString)("stem")
 DET_N.setName('DET_N')
 
 # بالكتاب --> ب + ال + كتاب
-P_DET_N = (oneOf(prepositions) + (oneOf(def_art) | oneOf(def_art_short)))("prefix") + SkipTo(endOfString)("stem")
-P_DET_N.setName('P_DET_N')
+PREP_DET_N = (oneOf(prepositions) + (oneOf(def_art) | oneOf(def_art_short)))("prefix") + SkipTo(endOfString)("stem")
+PREP_DET_N.setName('PREP_DET_N')
 
 
 # Pronouns
@@ -105,9 +112,9 @@ PRO.setName('PRO')
 ind = oneOf(ind_obj_suffixes)
 prep = oneOf(prepositions)
 
-P_PRO = prep("stem") + ind("suffix") + \
+PREP_PRO = prep("stem") + ind("suffix") + \
     FollowedBy(endOfString)
-P_PRO.setName('P_PRO')
+PREP_PRO.setName('PREP_PRO')
 
 
 #################
@@ -122,11 +129,11 @@ VBZ.setName('VBZ')
 VBZ_PRO = VBZ + oneOf(dir_obj_suffixes)
 VBZ_PRO.setName('VBZ_PRO')
 
-VBZ_P_PRO = VBZ + VB_IDO
-VBZ_P_PRO.setName('VBZ_P_PRO')
+VBZ_PREP_PRO = VBZ + VB_IDO
+VBZ_PREP_PRO.setName('VBZ_PREP_PRO')
 
-VBZ_PRO_P_PRO = VBZ + VB_DO + VB_IDO
-VBZ_PRO_P_PRO.setName('VBZ_PRO_P_PRO')
+VBZ_PRO_PREP_PRO = VBZ + VB_DO + VB_IDO
+VBZ_PRO_PREP_PRO.setName('VBZ_PRO_PREP_PRO')
 
 VBD = Combine(SkipTo(VBD_SUFF +
                      Or([VBD_CLIT + endOfString, endOfString]))("stem") +
@@ -136,11 +143,11 @@ VBD.setName('VBD')
 VBD_PRO = VBD + VB_DO
 VBD_PRO.setName('VBD_PRO')
 
-VBD_P_PRO = VBD + VB_IDO
-VBD_P_PRO.setName('VBD_P_PRO')
+VBD_PREP_PRO = VBD + VB_IDO
+VBD_PREP_PRO.setName('VBD_PREP_PRO')
 
-VBD_PRO_P_PRO = VBD + VB_DO + VB_IDO
-VBD_PRO_P_PRO.setName('VBD_PRO_P_PRO')
+VBD_PRO_PREP_PRO = VBD + VB_DO + VB_IDO
+VBD_PRO_PREP_PRO.setName('VBD_PRO_PREP_PRO')
 
 
 #################
@@ -169,17 +176,17 @@ NEG_VBZ_PRO_NEG = NEG1 + vbz_neg + \
                   VB_DO + NEG2
 NEG_VBZ_PRO_NEG.setName('NEG_VBZ_PRO_NEG')
 
-VBZ_P_PRO_NEG = vbz_neg + VB_IDO + NEG2
-VBZ_P_PRO_NEG.setName('VBZ_P_PRO_NEG')
+VBZ_PREP_PRO_NEG = vbz_neg + VB_IDO + NEG2
+VBZ_PREP_PRO_NEG.setName('VBZ_PREP_PRO_NEG')
 
-NEG_VBZ_P_PRO_NEG = NEG1 + vbz_neg + VB_IDO + NEG2
-NEG_VBZ_P_PRO_NEG.setName('NEG_VBZ_P_PRO_NEG')
+NEG_VBZ_PREP_PRO_NEG = NEG1 + vbz_neg + VB_IDO + NEG2
+NEG_VBZ_PREP_PRO_NEG.setName('NEG_VBZ_PREP_PRO_NEG')
 
-VBZ_PRO_P_PRO_NEG = vbz_neg + VB_DO + VB_IDO + NEG2
-VBZ_PRO_P_PRO_NEG.setName('VBZ_PRO_P_PRO_NEG')
+VBZ_PRO_PREP_PRO_NEG = vbz_neg + VB_DO + VB_IDO + NEG2
+VBZ_PRO_PREP_PRO_NEG.setName('VBZ_PRO_PREP_PRO_NEG')
 
-NEG_VBZ_PRO_P_PRO_NEG = NEG1 + VBZ_PRO_P_PRO_NEG
-NEG_VBZ_PRO_P_PRO_NEG.setName('NEG_VBZ_PRO_P_PRO_NEG')
+NEG_VBZ_PRO_PREP_PRO_NEG = NEG1 + VBZ_PRO_PREP_PRO_NEG
+NEG_VBZ_PRO_PREP_PRO_NEG.setName('NEG_VBZ_PRO_PREP_PRO_NEG')
 
 
 # negative vbd #
@@ -199,17 +206,17 @@ VBD_PRO_NEG.setName('VBD_PRO_NEG')
 NEG_VBD_PRO_NEG = NEG1 + VBD_PRO_NEG
 NEG_VBD_PRO_NEG.setName('NEG_VBD_PRO_NEG')
 
-VBD_P_PRO_NEG = vbd_neg + VB_IDO + NEG2
-VBD_P_PRO_NEG.setName('VBD_P_PRO_NEG')
+VBD_PREP_PRO_NEG = vbd_neg + VB_IDO + NEG2
+VBD_PREP_PRO_NEG.setName('VBD_PREP_PRO_NEG')
 
-NEG_VBD_P_PRO_NEG = NEG1 + VBD_P_PRO_NEG
-NEG_VBD_P_PRO_NEG.setName('NEG_VBD_P_PRO_NEG')
+NEG_VBD_PREP_PRO_NEG = NEG1 + VBD_PREP_PRO_NEG
+NEG_VBD_PREP_PRO_NEG.setName('NEG_VBD_PREP_PRO_NEG')
 
-VBD_PRO_P_PRO_NEG = vbd_neg + VB_DO + VB_IDO + NEG2
-VBD_PRO_P_PRO_NEG.setName('VBD_PRO_P_PRO_NEG')
+VBD_PRO_PREP_PRO_NEG = vbd_neg + VB_DO + VB_IDO + NEG2
+VBD_PRO_PREP_PRO_NEG.setName('VBD_PRO_PREP_PRO_NEG')
 
-NEG_VBD_PRO_P_PRO_NEG = NEG1 + VBD_PRO_P_PRO_NEG
-NEG_VBD_PRO_P_PRO_NEG.setName('NEG_VBD_PRO_P_PRO_NEG')
+NEG_VBD_PRO_PREP_PRO_NEG = NEG1 + VBD_PRO_PREP_PRO_NEG
+NEG_VBD_PRO_PREP_PRO_NEG.setName('NEG_VBD_PRO_PREP_PRO_NEG')
 
 
 # Uninflected
@@ -217,19 +224,19 @@ NEG_VBD_PRO_P_PRO_NEG.setName('NEG_VBD_PRO_P_PRO_NEG')
 UNIN = SkipTo(endOfString)("stem")
 UNIN.setName("UNIN")
 
-P_UNIN = (oneOf(prepositions))("prefix") + SkipTo(endOfString)("stem")
-P_UNIN.setName("P_UNIN")
+PREP_UNIN = (oneOf(prepositions))("prefix") + SkipTo(endOfString)("stem")
+PREP_UNIN.setName("PREP_UNIN")
 
 # uninflected vbd #
 
 UNINVBD_PRO = SkipTo(VB_DO + endOfString)("stem") + VB_DO("suffix")
 UNINVBD_PRO.setName('UNINVBD_PRO')
 
-UNINVBD_P_PRO = SkipTo(VB_IDO + endOfString)("stem") + VB_IDO("suffix")
-UNINVBD_P_PRO.setName('UNINVBD_P_PRO')
+UNINVBD_PREP_PRO = SkipTo(VB_IDO + endOfString)("stem") + VB_IDO("suffix")
+UNINVBD_PREP_PRO.setName('UNINVBD_PREP_PRO')
 
-UNINVBD_PRO_P_PRO = SkipTo(VBD_CLIT + endOfString)("stem") + VBD_CLIT("suffix")
-UNINVBD_PRO_P_PRO.setName('UNINVBD_PRO_P_PRO')
+UNINVBD_PRO_PREP_PRO = SkipTo(VBD_CLIT + endOfString)("stem") + VBD_CLIT("suffix")
+UNINVBD_PRO_PREP_PRO.setName('UNINVBD_PRO_PREP_PRO')
 
 # negative uninflected vbd #
 
@@ -239,11 +246,11 @@ UNINVBD_NEG.setName("UNINVBD_NEG")
 UNINVBD_PRO_NEG = SkipTo(VB_DO + NEG2 + endOfString)("stem") + VB_DO + NEG2
 UNINVBD_PRO_NEG.setName("UNINVBD_PRO_NEG")
 
-UNINVBD_P_PRO_NEG = SkipTo(VB_IDO + NEG2 + endOfString)("stem") + VB_IDO + NEG2
-UNINVBD_P_PRO_NEG.setName("UNINVBD_P_PRO_NEG")
+UNINVBD_PREP_PRO_NEG = SkipTo(VB_IDO + NEG2 + endOfString)("stem") + VB_IDO + NEG2
+UNINVBD_PREP_PRO_NEG.setName("UNINVBD_PREP_PRO_NEG")
 
-UNINVBD_PRO_P_PRO_NEG = SkipTo(VB_DO + VB_IDO + NEG2 + endOfString)("stem") + VB_DO + VB_IDO + NEG2
-UNINVBD_PRO_P_PRO_NEG.setName("UNINVBD_PRO_P_PRO_NEG")
+UNINVBD_PRO_PREP_PRO_NEG = SkipTo(VB_DO + VB_IDO + NEG2 + endOfString)("stem") + VB_DO + VB_IDO + NEG2
+UNINVBD_PRO_PREP_PRO_NEG.setName("UNINVBD_PRO_PREP_PRO_NEG")
 
 NEG_UNINVBD_NEG = NEG1 + UNINVBD_NEG
 NEG_UNINVBD_NEG.setName("NEG_UNINVBD_NEG")
@@ -251,11 +258,11 @@ NEG_UNINVBD_NEG.setName("NEG_UNINVBD_NEG")
 NEG_UNINVBD_PRO_NEG = NEG1 + UNINVBD_PRO_NEG
 NEG_UNINVBD_PRO_NEG.setName("NEG_UNINVBD_PRO_NEG")
 
-NEG_UNINVBD_P_PRO_NEG = NEG1 + UNINVBD_P_PRO_NEG
-NEG_UNINVBD_P_PRO_NEG.setName("NEG_UNINVBD_P_PRO_NEG")
+NEG_UNINVBD_PREP_PRO_NEG = NEG1 + UNINVBD_PREP_PRO_NEG
+NEG_UNINVBD_PREP_PRO_NEG.setName("NEG_UNINVBD_PREP_PRO_NEG")
 
-NEG_UNINVBD_PRO_P_PRO_NEG = NEG1 + UNINVBD_PRO_P_PRO + NEG2
-NEG_UNINVBD_PRO_P_PRO_NEG.setName("NEG_UNINVBD_PRO_P_PRO_NEG")
+NEG_UNINVBD_PRO_PREP_PRO_NEG = NEG1 + UNINVBD_PRO_PREP_PRO + NEG2
+NEG_UNINVBD_PRO_PREP_PRO_NEG.setName("NEG_UNINVBD_PRO_PREP_PRO_NEG")
 
 
 ################
@@ -265,20 +272,20 @@ NEG_UNINVBD_PRO_P_PRO_NEG.setName("NEG_UNINVBD_PRO_P_PRO_NEG")
 # These word classes are passed to stemmer.py so that the parser knows which
 # parse patterns to try.
 
-verbs = [VBZ, VBZ_PRO, VBZ_P_PRO, VBZ_PRO_P_PRO,
-         VBD, VBD_PRO, VBD_P_PRO, VBD_PRO_P_PRO]
-neg_verbs = [NEG_VBD_NEG, NEG_VBD_PRO_NEG, NEG_VBD_P_PRO_NEG, NEG_VBD_PRO_P_PRO_NEG,
-                 VBD_NEG,     VBD_PRO_NEG,     VBD_P_PRO_NEG,     VBD_PRO_P_PRO_NEG,
-             NEG_VBZ_NEG, NEG_VBZ_PRO_NEG, NEG_VBZ_P_PRO_NEG, NEG_VBZ_PRO_P_PRO_NEG,
-                 VBZ_NEG,     VBZ_PRO_NEG,     VBZ_P_PRO_NEG,     VBZ_PRO_P_PRO_NEG,]
-nouns = [N_PRO, P_N_PRO, DET_N, P_DET_N]
+verbs = [VBZ, VBZ_PRO, VBZ_PREP_PRO, VBZ_PRO_PREP_PRO,
+         VBD, VBD_PRO, VBD_PREP_PRO, VBD_PRO_PREP_PRO]
+neg_verbs = [NEG_VBD_NEG, NEG_VBD_PRO_NEG, NEG_VBD_PREP_PRO_NEG, NEG_VBD_PRO_PREP_PRO_NEG,
+                 VBD_NEG,     VBD_PRO_NEG,     VBD_PREP_PRO_NEG,     VBD_PRO_PREP_PRO_NEG,
+             NEG_VBZ_NEG, NEG_VBZ_PRO_NEG, NEG_VBZ_PREP_PRO_NEG, NEG_VBZ_PRO_PREP_PRO_NEG,
+                 VBZ_NEG,     VBZ_PRO_NEG,     VBZ_PREP_PRO_NEG,     VBZ_PRO_PREP_PRO_NEG,]
+nouns = [N_PRO, PREP_N_PRO, DET_N, PREP_DET_N]
 conj = [C]
-prons = [PRO, P_PRO]
-parts = [P, PART_PRO]
-unin = [UNIN, P_UNIN,
-        UNINVBD_PRO, UNINVBD_P_PRO, UNINVBD_PRO_P_PRO,
-        UNINVBD_NEG, UNINVBD_PRO_NEG, UNINVBD_P_PRO_NEG, UNINVBD_PRO_P_PRO_NEG,
-        NEG_UNINVBD_NEG, NEG_UNINVBD_PRO_NEG, NEG_UNINVBD_P_PRO_NEG, NEG_UNINVBD_PRO_P_PRO_NEG]
+prons = [PRO, PREP_PRO]
+parts = [PREP, PART_PRO, GEN, GEN_PRO]
+unin = [UNIN, PREP_UNIN,
+        UNINVBD_PRO, UNINVBD_PREP_PRO, UNINVBD_PRO_PREP_PRO,
+        UNINVBD_NEG, UNINVBD_PRO_NEG, UNINVBD_PREP_PRO_NEG, UNINVBD_PRO_PREP_PRO_NEG,
+        NEG_UNINVBD_NEG, NEG_UNINVBD_PRO_NEG, NEG_UNINVBD_PREP_PRO_NEG, NEG_UNINVBD_PRO_PREP_PRO_NEG]
 
 word_types = conj + verbs + neg_verbs + nouns + prons + parts + unin
 

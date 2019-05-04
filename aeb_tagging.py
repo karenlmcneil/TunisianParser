@@ -68,6 +68,57 @@ def make_training_and_test_data(text, corpus_size=1000, hold_out_percent=0.9):
     return
 
 
+# >>> from nltk.tag import DefaultTagger
+# >>> tagger = DefaultTagger('NN')
+# >>> tagger.tag(['Hello', 'World'])
+# [('Hello', 'NN'), ('World', 'NN')]
+# >>> from nltk.corpus import treebank
+# >>> test_sents = treebank.tagged_sents()[3000:]
+# >>> tagger.evaluate(test_sents)
+# 0.14331966328512843
+
+# >>> from nltk.tag import untag
+# >>> untag([('Hello', 'NN'), ('World', 'NN')])
+# ['Hello', 'World']
+
+# >>> tagger1 = DefaultTagger('NN')
+# >>> tagger2 = UnigramTagger(train_sents, backoff=tagger1)
+# >>> tagger2.evaluate(test_sents)
+# 0.8758471832505935
+
+# >>> import pickle
+# >>> f = open('tagger.pickle', 'wb')
+# >>> pickle.dump(tagger, f)
+# >>> f.close()
+# >>> f = open('tagger.pickle', 'rb')
+# >>> tagger = pickle.load(f)
+
+def backoff_tagger(train_sents, tagger_classes, backoff=None):
+    """
+    from tag_util import backoff_tagger
+    backoff = DefaultTagger('NN')
+    tagger = backoff_tagger(train_sents, [UnigramTagger, BigramTagger, TrigramTagger], backoff=backoff)
+    > tagger.evaluate(test_sents)
+    0.8806820634578028
+    :param train_sents:
+    :param tagger_classes:
+    :param backoff:
+    :return:
+    """
+    for cls in tagger_classes:
+        backoff = cls(train_sents, backoff=backoff)
+
+    return backoff
+
+# >>> from nltk.tag.sequential import ClassifierBasedPOSTagger
+# >>> tagger = ClassifierBasedPOSTagger(train=train_sents)
+# >>> tagger.evaluate(test_sents)
+# 0.9309734513274336
+# >>> default = DefaultTagger('NN')
+# >>> tagger = ClassifierBasedPOSTagger(train=train_sents, backoff=default, cutoff_prob=0.3)
+# >>> tagger.evaluate(test_sents)
+# 0.9311029570472696
+
 # def pos_features(word):
 #     noun_suffixes = ["ي", "يا", "نا", "ك", "كم", "و", "ه", "ها", "هم"]
 #     features = {}

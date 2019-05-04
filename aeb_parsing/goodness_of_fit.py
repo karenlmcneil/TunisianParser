@@ -165,7 +165,7 @@ def choose_best_parse(parse_dict, debug=False):
     freq_dict = {}
     for word_type, parse in parse_dict.items():
         stem = extract_stem(parse)
-        short_stems = ['C', 'PART_PRO', 'PRO', 'P_PRO', 'P', 'C_PART_PRO', 'C_PRO', 'C_P_PRO', 'C_P']
+        short_stems = ['C', 'PART_PRO', 'PRO', 'PREP_PRO', 'PREP', 'C_PART_PRO', 'C_PRO', 'C_P_PRO', 'C_P']
         if not stem:
             continue
         if len(stem) < 2 and word_type not in short_stems:
@@ -182,7 +182,7 @@ def choose_best_parse(parse_dict, debug=False):
             func = make_alt_unin_forms
         elif 'N' in word_type:
             func = make_alt_noun_forms
-        elif 'P_PRO' in word_type:
+        elif 'PREP_PRO' in word_type:
             func = make_alt_affixed_pron_forms
         elif 'PRO' or 'C_PRO' in word_type:
             func = make_alt_ind_pron_forms

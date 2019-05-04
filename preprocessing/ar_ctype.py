@@ -2,7 +2,7 @@ import re
 from preprocessing.arabic_const import *
 
 
-HARAKAT_pat =re.compile(r'|'.join([FATHATAN,DAMMATAN,KASRATAN,FATHA,DAMMA,KASRA,SUKUN,SHADDA]))
+HARAKAT_pat = re.compile(r'|'.join([FATHATAN,DAMMATAN,KASRATAN,FATHA,DAMMA,KASRA,SUKUN,SHADDA]))
 HAMZAT_pat =re.compile(r'|'.join([WAW_HAMZA,YEH_HAMZA]))
 ALEFAT_pat =re.compile(r'|'.join([ALEF_MADDA,ALEF_HAMZA_ABOVE,ALEF_HAMZA_BELOW,HAMZA_ABOVE,HAMZA_BELOW]))
 LAMALEFAT_pat =re.compile(r'|'.join([LAM_ALEF,LAM_ALEF_HAMZA_ABOVE,LAM_ALEF_HAMZA_BELOW,LAM_ALEF_MADDA_ABOVE]))
@@ -44,11 +44,12 @@ def normalize_numbers(w):
 
 
 def normalize(text):
-	text=strip_tashkeel(text)
-	text=strip_tatweel(text)
-	text=normalize_lamalef(text)
-	text=normalize_hamza(text)
-	text=normalize_gaaf(text)
+	text = strip_tashkeel(text)
+	text = strip_tatweel(text)
+	text = normalize_alef(text)
+	text = normalize_lamalef(text)
+	text = normalize_hamza(text)
+	text = normalize_gaaf(text)
 	#text=normalize_spellerrors(text)
 	text = normalize_numbers(text)
 	return text

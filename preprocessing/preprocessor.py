@@ -39,7 +39,7 @@ def preprocess(string):
     """
     string = string.strip()
     string = html.escape(string)
-    string = space_mixed_words(string)
     string = normalize(string)
+    string = space_mixed_words(string)
     tokens = nltk.tokenize.wordpunct_tokenize(string)
     return tokens

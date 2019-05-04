@@ -20,7 +20,21 @@ class TestParser(TestCase):
         string = 'هذه العربية و هذه الmixed!'
         p = parse_string(string)
         expected_output = [('هذه', 'DEM'), ('ال', 'DET'), ('عربية', 'N'), ('و', 'C'),
-            ('هذه', 'DEM'), ('ال', 'DET'), ('mixed', 'N'), ('!', 'PUNCT')]
+            ('هذه', 'DEM'), ('ال', 'N'), ('mixed', 'FW'), ('!', 'PUNCT')]
+        # 'N' instead of 'DET' for second 'ال' is an expected failure, since an
+        # isolated determiner is not an expected word type
+        self.assertEqual(expected_output, p)
+
+    def test_particle_with_shadda(self):
+        string = 'الّي'
+        p = parse_string(string)
+        expected_output = [('الي', 'REL')]
+        self.assertEqual(expected_output, p)
+
+    def test_verb_with_shadda(self):
+        string = 'يرفّع'
+        p = parse_string(string)
+        expected_output = [('يرفع', 'VBZ')]
         self.assertEqual(expected_output, p)
 
     def test_multiple_prefix(self):

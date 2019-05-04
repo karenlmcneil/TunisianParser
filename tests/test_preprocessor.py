@@ -29,7 +29,11 @@ class TestPreprocessor(TestCase):
 
     def test_normalize_spelling(self):
         # If a word is Arabic, it strips the harakat and normalizes the spelling
-        vowelled_word = 'ڤِتَابَةٌ'
+        vowelled_word = 'إڤِتَابَةٌ'
         normalized_word = normalize(vowelled_word)
-        self.assertEqual('قتابة', normalized_word)
+        self.assertEqual('اقتابة', normalized_word)
 
+    def test_normalize_spelling1(self):
+        w = 'إلّي'
+        normalized_word = normalize(w)
+        self.assertEqual('الي', normalized_word)
