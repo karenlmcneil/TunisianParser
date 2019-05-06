@@ -1,7 +1,8 @@
-import html
-import random
+from numpy import array
 from preprocessing.preprocessor import test_lang
+import random
 import re
+from sklearn.model_selection import KFold
 
 
 # sentence tokenization: https://nlpforhackers.io/splitting-text-into-sentences/
@@ -26,7 +27,7 @@ def tokenize_sents(text):
         new_sents.append(sents[i - 1] + s)
     return new_sents
 
-
+# This function only used once, to make the main data set
 def make_training_and_test_data(text, corpus_size=1000, hold_out_percent=0.9):
     """
     Take a larger corpus, shuffles it, and makes a training and test
@@ -67,6 +68,29 @@ def make_training_and_test_data(text, corpus_size=1000, hold_out_percent=0.9):
         restfile.write('\n'.join(rest_of_corpus))
     return
 
+def make_sentence_list(filename):
+    """
+    Takes a tsv of word \t\ tag pairs and produces a list of sentences with (w, tag)
+    tuples.
+    :param filenname: tsv file of format: word \t POS
+    :return: list of sentences, each sentence is a list of tuples
+    """
+    tup_list = []
+    p = re.compile(r'([.!؟])')
+    with open(filename, 'r') as infile:
+        sent = []
+        for l in infile:
+            w, t = l.strip().split('\t')
+            sent.append((w, t))
+            if re.match(p, w):
+                tup_list.append(sent)
+                sent = []
+        if sent:
+            tup_list.append(sent)
+    return tup_list
+
+def evaluate_nltk_pos_taggers(gold_standard_filename):
+    pass
 
 # >>> from nltk.tag import DefaultTagger
 # >>> tagger = DefaultTagger('NN')
@@ -93,22 +117,22 @@ def make_training_and_test_data(text, corpus_size=1000, hold_out_percent=0.9):
 # >>> f = open('tagger.pickle', 'rb')
 # >>> tagger = pickle.load(f)
 
-def backoff_tagger(train_sents, tagger_classes, backoff=None):
-    """
-    from tag_util import backoff_tagger
-    backoff = DefaultTagger('NN')
-    tagger = backoff_tagger(train_sents, [UnigramTagger, BigramTagger, TrigramTagger], backoff=backoff)
-    > tagger.evaluate(test_sents)
-    0.8806820634578028
-    :param train_sents:
-    :param tagger_classes:
-    :param backoff:
-    :return:
-    """
-    for cls in tagger_classes:
-        backoff = cls(train_sents, backoff=backoff)
-
-    return backoff
+# def backoff_tagger(train_sents, tagger_classes, backoff=None):
+#     """
+#     from tag_util import backoff_tagger
+#     backoff = DefaultTagger('NN')
+#     tagger = backoff_tagger(train_sents, [UnigramTagger, BigramTagger, TrigramTagger], backoff=backoff)
+#     > tagger.evaluate(test_sents)
+#     0.8806820634578028
+#     :param train_sents:
+#     :param tagger_classes:
+#     :param backoff:
+#     :return:
+#     """
+#     for cls in tagger_classes:
+#         backoff = cls(train_sents, backoff=backoff)
+#
+#     return backoff
 
 # >>> from nltk.tag.sequential import ClassifierBasedPOSTagger
 # >>> tagger = ClassifierBasedPOSTagger(train=train_sents)
