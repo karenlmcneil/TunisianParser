@@ -1,3 +1,4 @@
+import argparse
 import nltk
 
 from aeb_parser import parse_string
@@ -130,8 +131,11 @@ def evaluate_pos_tagging(goldfile, testfile):
 
 
 if __name__ == '__main__':
-    # seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation()
-    seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation()
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--filename", type=str, default="data/segmentation_gold.txt",
+                           help="txt file with gold standard segmentation, with '+' between segments")
+    args = argparser.parse_args()
+    seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation(args.filename)
     print("\nWord-level segmentation accuracy is {:2.2%}".format(seg_acc),
           "\nCharacter-level segmentation precision is {:2.2%}".format(seg_prec),
           "\nCharacter-level segmentation recall is {:2.2%}".format(seg_rec))

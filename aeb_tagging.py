@@ -93,6 +93,32 @@ def backoff_tagger(train_sents, test_sents, tagger_classes, backoff=None):
     return backoff, scores
 
 
+def train_brill_tagger(initial_tagger, train_sents, **kwargs):
+    templates = [
+        brill.Template(brill.Pos([-1])),
+        brill.Template(brill.Pos([1])),
+        brill.Template(brill.Pos([-2])),
+        brill.Template(brill.Pos([2])),
+        brill.Template(brill.Pos([-2, -1])),
+        brill.Template(brill.Pos([1, 2])),
+        brill.Template(brill.Pos([-3, -2, -1])),
+        brill.Template(brill.Pos([1, 2, 3])),
+        brill.Template(brill.Pos([-1]), brill.Pos([1])),
+        brill.Template(brill.Word([-1])),
+        brill.Template(brill.Word([1])),
+        brill.Template(brill.Word([-2])),
+        brill.Template(brill.Word([2])),
+        brill.Template(brill.Word([-2, -1])),
+        brill.Template(brill.Word([1, 2])),
+        brill.Template(brill.Word([-3, -2, -1])),
+        brill.Template(brill.Word([1, 2, 3])),
+        brill.Template(brill.Word([-1]), brill.Word([1])),
+  ]
+
+    trainer = brill_trainer.BrillTaggerTrainer(initial_tagger, templates, deterministic=True)
+    return trainer.train(train_sents, **kwargs)
+
+
 def evaluate_nltk_pos_taggers(gold_standard_filename, num_folds=10, loo=False):
     """
     Evaluates the NLTK backoff taggers on the corpus data. Uses cross-validation.
@@ -101,42 +127,47 @@ def evaluate_nltk_pos_taggers(gold_standard_filename, num_folds=10, loo=False):
     :param loo: bool: whether to use Leave One Out cross-validation
     :return:
     """
-    data_array = make_sentence_list(gold_standard_filename)
-    if loo:  # Leave One Out cross-validation
-        num_folds = len(data_array)-1
+    tagged_sents = make_sentence_list(gold_standard_filename)
     backoff = DefaultTagger('N')
     tagger_classes = [UnigramTagger, BigramTagger, TrigramTagger]
-    subset_size = int(len(data_array) / num_folds)
     scores = {
         'DefaultTagger': [],
         'UnigramTagger': [],
         'BigramTagger': [],
         'TrigramTagger': [],
+        'BrillTagger': [],
     }
 
     # k-fold cross-validation
+    if loo:  # Leave One Out cross-validation
+        num_folds = len(tagged_sents)-1
+    subset_size = int(len(tagged_sents) / num_folds)
     for i in range(num_folds):
 
         # training and testing data for this round
-        testing_this_round = data_array[i * subset_size:][:subset_size]
-        training_this_round = data_array[:i * subset_size] + data_array[(i + 1) * subset_size:]
+        X_test = tagged_sents[i * subset_size:][:subset_size]
+        X_train = tagged_sents[:i * subset_size] + tagged_sents[(i + 1) * subset_size:]
 
         # compute score for taggers
-        default_score = backoff.evaluate(testing_this_round)
-        trigram, tagger_scores = backoff_tagger(training_this_round, testing_this_round,
+        default_score = backoff.evaluate(X_train)
+        trigram, tagger_scores = backoff_tagger(X_train, X_test,
                                                 tagger_classes, backoff=backoff)
         uni_score, bi_score, tri_score = tagger_scores
+        brill_tagger = train_brill_tagger(trigram, X_train)
+        brill_score = brill_tagger.evaluate(X_test)
+        brill_tagger.print_template_statistics(printunused=False)
 
         # save scores
         scores['DefaultTagger'].append(default_score)
         scores['UnigramTagger'].append(uni_score)
         scores['BigramTagger'].append(bi_score)
         scores['TrigramTagger'].append(tri_score)
+        scores['BrillTagger'].append(brill_score)
 
     for k, v in scores.items():  # average scores across folds
         if v:
             scores[k] = sum(v)/len(v)
-    print(scores)
+            print(k, ": {:2.2%}".format(scores[k]))
     return scores
 
 
