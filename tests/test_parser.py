@@ -76,7 +76,6 @@ class TestParser(TestCase):
     def test_real_sentences(self):
         string = 'ومن وقتاش رجعت تحكي معاه المدير؟'
         p = parse_string(string)
-        print("parse is ", p)
         expected_output = [('و', 'C'), ('من', 'N'), ('وقتاش', 'INTEROG'), ('رجعت', 'VBD'),
                            ('تحكي', 'VBZ'), ('معا', 'N'), ('ه', 'PRO'), ('ال', 'DET'),
                            ('مدير', 'N'), ('؟', 'PUNCT')]

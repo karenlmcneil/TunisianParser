@@ -4,7 +4,7 @@
 This package performs morphological segmentation and part of speech
 tagging for Tunisian Arabic.
 
-##parser.py
+## aeb_parser.py
 
 ### Usage
 As input, the parser takes a string of Arabic, writen in Arabic script 
@@ -37,8 +37,21 @@ $ python parser.py --string "من وقتاش رجعت تحكي معاه المد
 ```text
 $ python parse_eval.py
 
-Word-level segmentation accuracy is 85.94% 
-Character-level segmentation precision is 96.49% 
-Character-level segmentation recall is 94.34%
+Word-level segmentation accuracy is 92.08% 
+Character-level segmentation precision is 97.62% 
+Character-level segmentation recall is 93.44%
+
+
+```
+
+## aeb_tagging.py
+
+### Usage
+```text
+$ python aeb_tagging.py --n_folds 10
+{'DefaultTagger': 0.2661379031035197, 'UnigramTagger': 0.8252707356105378, 'BigramTagger': 0.8311627137602488, 'TrigramTagger': 0.8324412327452249}
+
+$ python aeb_tagging.py --loo True
+{'DefaultTagger': 0.26979523430344154, 'UnigramTagger': 0.8259191576444443, 'BigramTagger': 0.8337195775813869, 'TrigramTagger': 0.8381413203179351}
 
 ```

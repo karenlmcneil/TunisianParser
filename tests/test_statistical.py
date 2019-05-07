@@ -210,10 +210,10 @@ class ChooseBestNegVBDParseTest(TestCase):
         self.assertEqual('كتب', choose_best_stem_test('ماكتبتهاش'))
 
     def test_vbd_ido_neg(self):
-        self.assertEqual('كتب', choose_best_stem_test('كتبتهاليش', debug=True))
+        self.assertEqual('كتب', choose_best_stem_test('كتبتهاليش'))
 
     def test_mA_vbd_ido_neg(self):
-        self.assertEqual('كتب', choose_best_stem_test('ماكتبتهاليش', debug=True))
+        self.assertEqual('كتب', choose_best_stem_test('ماكتبتهاليش'))
 
     def test_mA_vbd_do_ido_neg(self):
         self.assertEqual('قل', choose_best_stem_test('ماقلتوليش'))
