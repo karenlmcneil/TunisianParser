@@ -23,17 +23,11 @@ def tokenize_sents(text):
 
 
 # This function only used once, to make the main data set
-def make_training_and_test_data(text, corpus_size=1000, hold_out_percent=0.9):
+def filter_and_shuffle_corpus(text):
     """
-    Take a larger corpus, shuffles it, and makes a training and test
-    data set out of a subset of the corpus.
+    Shuffles Tunisian Arabic corpus and removes French and MSA sents.
     :param text: String of plain text.
-    :param corpus_size: Desired size of subcorpus for annotation. Default size
-    is 1,000 sentences.
-    :param hold_out_percent: Desired portion of the subcorpus to hold out for
-    training. Default is 90%.
-    :return: None. Saves a file with the training corpus and one of testing
-    corpus.
+    :return: None. Saves a file with the new corpus.
     """
 
     # Split corpus into sentences
@@ -49,18 +43,9 @@ def make_training_and_test_data(text, corpus_size=1000, hold_out_percent=0.9):
 
     # make training and testing corpus
     random.shuffle(sents)
-    subcorpus = sents[:corpus_size]
-    rest_of_corpus = sents[corpus_size:]
-    split = int(len(subcorpus) * hold_out_percent)
-    subcorpus_train = subcorpus[:split]
-    subcorpus_test = subcorpus[split:]
-    with open('data/corpus_train.txt', 'w') as trainfile, open('data/corpus_test.txt', 'w') as testfile:
-        for trn_sent in subcorpus_train:
-            trainfile.write(trn_sent + '\n')
-        for test_sent in subcorpus_test:
-            testfile.write(test_sent + '\n')
-    with open('data/corpus_rest.txt', 'w') as restfile:
-        restfile.write('\n'.join(rest_of_corpus))
+    with open('data/corpus_sents.txt', 'w') as trainfile:
+        for sent in sents:
+            trainfile.write(sent + '\n')
     return
 
 

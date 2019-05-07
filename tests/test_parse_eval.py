@@ -2,7 +2,7 @@ import shutil, tempfile
 from os import path, getcwd
 from unittest import TestCase, skip
 
-from parse_eval import evaluate_parser_segmentation, evaluate_parser_stem, make_binary, evaluate_pos_tagging
+from parse_eval import evaluate_parser_segmentation, make_binary, evaluate_pos_tagging
 
 
 class SegmenterEvalTest(TestCase):
@@ -59,17 +59,5 @@ class PartOfSpeechTaggingEvalTest(TestCase):
     def tearDown(self):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
-
-@skip
-class ParserStemEvalTest(TestCase):
-
-    def test_stem_gold_standard_exists(self):
-        self.assertTrue(path.exists('data/arabic_stem_testing.txt'))
-        self.assertTrue(path.exists('data/arabic_test_string.txt'))
-
-    def test_evaluate_parser_stem(self):
-        accuracy = evaluate_parser_stem(data_length=2000)
-        print('Accuracy: ', accuracy*100)
-        self.assertGreater(accuracy, 0)
 
 

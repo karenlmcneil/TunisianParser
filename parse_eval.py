@@ -1,19 +1,6 @@
 import nltk
 
-# from preprocessing.uni2buck import transString
 from aeb_parser import parse_string
-
-
-# #**********************************************#
-# #             TESTING PARSER                   #
-# #**********************************************#
-
-#def make_parse_string(top_parse):
-#     parse_string = '+'.join(top_parse.asList())
-#     # kludge to fix cases where I have an empty '' prefix or suffix
-# #    if parse_string.startswith('+'): parse_string = parse_string[1:]
-# #    if parse_string.endswith('+'): parse_string = parse_string[:-1]
-#     return parse_string
 
 
 def make_binary(parse):
@@ -142,36 +129,9 @@ def evaluate_pos_tagging(goldfile, testfile):
     return acc / acc_denom
 
 
-def evaluate_parser_stem(data_length=2000):
-    gl = open('data/arabic_stem_testing.txt', 'r', encoding='utf-8').readlines()
-    tl = open('data/arabic_test_string.txt', 'r', encoding='utf-8').readlines()
-    log = open('data/parse_test_log.txt', 'w', encoding='utf-8')
-    total_tokens = 0
-    for line in gl:
-        total_tokens += len(line.split())
-    correct = 0
-    parse_pairs = []
-    for i, line in enumerate(gl):
-        for j, word in enumerate(line.split()):
-            test_word = tl[i].split()[j]
-            parsed_word = parse_string(test_word)[0][0]
-            parse_pairs.append([word, parsed_word])
-    for correct_parse, test_parse in parse_pairs:
-        log.write("%s \t %s - " % (correct_parse, test_parse))
-        if correct_parse == test_parse:
-            correct += 1
-            log.write("right \n")
-        else:
-            log.write("wrong \n")
-    accuracy = correct/total_tokens
-    log.close()
-    return accuracy
-
-
 if __name__ == '__main__':
     # seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation()
     seg_acc, seg_prec, seg_rec = evaluate_parser_segmentation()
     print("\nWord-level segmentation accuracy is {:2.2%}".format(seg_acc),
           "\nCharacter-level segmentation precision is {:2.2%}".format(seg_prec),
           "\nCharacter-level segmentation recall is {:2.2%}".format(seg_rec))
-    # pos_acc = evaluate_pos_tagging(goldfile, testfile)
