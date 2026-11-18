@@ -1,5 +1,8 @@
-aebWordnetLexicon2015.xml
-asraar.txt
 */__pycache__/
 *.pyc
 .venv/
+
+# Python packaging artifacts
+build/
+dist/
+*.egg-info/

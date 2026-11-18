@@ -8,7 +8,7 @@ from aeb_parsing.pyparsing_grammar import (key_vbz_prefixes as vbz_prefixes,
 from aeb_parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent
 corpus_text_location = PROJECT_ROOT / "data" / "corpus_clean.txt"
 
 with corpus_text_location.open("r", encoding="utf-8") as f:

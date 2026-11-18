@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tunisian-parser"
+version = "0.1.0"
+description = "Rule-based morphological parser for Tunisian Arabic"
+requires-python = ">=3.10"
+dependencies = [
+    "nltk>=3.8,<4",
+    "pyparsing>=3,<4",
+]
+
+[tool.setuptools]
+packages = ["aeb_parsing", "preprocessing"]
+py-modules = ["aeb_parser"]
+
+[tool.setuptools.package-data]
+aeb_parsing = ["data/corpus_clean.txt"]
