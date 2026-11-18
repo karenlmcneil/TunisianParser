@@ -2,8 +2,9 @@ import argparse
 import csv
 import re
 
-from preprocessing.preprocessor import test_lang, preprocess
-from aeb_parsing.stemmer import stemmer
+from preprocessing.preprocessor import test_lang, preprocess, tokenize_with_spans
+from preprocessing.ar_ctype import normalize
+from aeb_parsing.stemmer import stemmer, extract_stem
 from aeb_parsing.goodness_of_fit import choose_best_parse
 
 
@@ -56,7 +57,6 @@ def load_saved_parses():
         saved_parses[n] = (n, 'NEG')
     return saved_parses
 
-
 def parse_string(string):
     """
     Morphologically segments and POS tags string of Tunisian Arabic text.
@@ -93,6 +93,64 @@ def parse_string(string):
         parsed_list.extend(mapped)
     return parsed_list
 
+def analyze_word(word):
+    """
+    Analyze one word, preserving its original surface form.
+    """
+    normalized = normalize(word)
+    saved_parses = load_saved_parses()
+
+    if not normalized or not normalized.isalpha():
+        segments = [{"text": normalized, "pos": "PUNCT"}]
+        stem = None
+
+    elif test_lang(normalized) != "AR":
+        segments = [{"text": normalized, "pos": "FW"}]
+        stem = None
+
+    elif normalized in saved_parses:
+        saved_word, pos = saved_parses[normalized]
+        segments = [{"text": saved_word, "pos": pos}]
+        stem = saved_word
+
+    else:
+        parse_dict = stemmer(normalized)
+        parse, pos = choose_best_parse(parse_dict, debug=False)
+
+        pos = re.sub("UNINVBD", "VBD", pos)
+        pos = re.sub("UNIN", "N", pos)
+
+        segments = [
+            {"text": segment, "pos": tag}
+            for segment, tag in zip(parse, pos.split("_"))
+        ]
+
+        stem = extract_stem(parse)
+
+    return {
+        "surface": word,
+        "normalized": normalized,
+        "segments": segments,
+        "stem": stem,
+    }
+
+def analyze_text(text):
+    """
+    Analyze text while preserving original word boundaries
+    and character offsets.
+    """
+    results = []
+
+    for token in tokenize_with_spans(text):
+        analysis = analyze_word(token["surface"])
+
+        results.append({
+            **analysis,
+            "start": token["start"],
+            "end": token["end"],
+        })
+
+    return results
 
 def parse_file(filename):
     name, ext = filename.split('.')

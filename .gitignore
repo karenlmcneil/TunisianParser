@@ -1,3 +1,5 @@
 aebWordnetLexicon2015.xml
 asraar.txt
 */__pycache__/
+*.pyc
+.venv/
