@@ -140,3 +140,15 @@ def test_analysis_preserves_mixed_script_unicode_offsets():
         {"text": "discours", "pos": "FW"}
     ]
     assert result[-1]["stem"] == "كتاب"
+
+def test_parser_loads_reference_corpus_from_another_directory(
+    tmp_path, monkeypatch
+):
+    import importlib
+    from aeb_parsing import goodness_of_fit
+
+    monkeypatch.chdir(tmp_path)
+
+    importlib.reload(goodness_of_fit)
+
+    assert goodness_of_fit.fd.N() > 0

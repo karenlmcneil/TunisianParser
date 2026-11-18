@@ -1,16 +1,20 @@
 import nltk
-import os
+from pathlib import Path
 
-from aeb_parsing.pyparsing_grammar import vbz_suff_inflec, \
-        poss_suffixes, def_art, def_art_short
-from aeb_parsing.pyparsing_grammar import key_vbz_prefixes as vbz_prefixes, \
-    key_vbd_suffixes as vbd_suffixes, ind_obj_suffixes, pronouns
+from aeb_parsing.pyparsing_grammar import (
+    vbz_suff_inflec, poss_suffixes, def_art, def_art_short)
+from aeb_parsing.pyparsing_grammar import (key_vbz_prefixes as vbz_prefixes, 
+    key_vbd_suffixes as vbd_suffixes, ind_obj_suffixes, pronouns)
 from aeb_parsing.stemmer import extract_stem, extract_suffix, extract_prefix
 
-corpus_text_location = 'data/corpus_clean.txt'
-corpus_text = open(corpus_text_location, 'r').read()
-fd = nltk.FreqDist(corpus_text.split())
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+corpus_text_location = PROJECT_ROOT / "data" / "corpus_clean.txt"
+
+with corpus_text_location.open("r", encoding="utf-8") as f:
+    corpus_text = f.read()
+
+fd = nltk.FreqDist(corpus_text.split())
 
 def compute_ave_freq(word_forms):
     # word_forms is a list of morphological variations of a word, such as
