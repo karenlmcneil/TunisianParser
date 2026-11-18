@@ -43,3 +43,22 @@ class StemmerTest(TestCase):
         parse_dict = stemmer(self.vbd)
         parse = parse_dict.get('VBD')
         self.assertEqual('ت', extract_suffix(parse))
+
+    def test_non_pronoun_does_not_use_pronoun_scoring(self):
+        from unittest.mock import patch
+        from aeb_parsing.goodness_of_fit import choose_best_parse
+
+        # Reuse a valid parse, but give one candidate an
+        # unrecognized, non-pronominal category.
+        parse = stemmer("كتاب")["UNIN"]
+
+        with patch(
+            "aeb_parsing.goodness_of_fit.make_alt_ind_pron_forms",
+            side_effect=AssertionError(
+                "Non-pronoun analysis used pronoun scoring"
+            ),
+        ):
+            choose_best_parse({
+                "OTHER": parse,
+                "UNIN": parse,
+            })

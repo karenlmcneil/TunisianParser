@@ -188,7 +188,7 @@ def choose_best_parse(parse_dict, debug=False):
             func = make_alt_noun_forms
         elif 'PREP_PRO' in word_type:
             func = make_alt_affixed_pron_forms
-        elif 'PRO' or 'C_PRO' in word_type:
+        elif 'PRO' in word_type:
             func = make_alt_ind_pron_forms
         else:
             func = None
